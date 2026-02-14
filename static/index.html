@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Analysis Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+  <style>
+    .message-enter { animation: fadeIn 0.25s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse-dot { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+    .pulse-dot { animation: pulse-dot 1.2s ease-in-out infinite; }
+    .pulse-dot:nth-child(2) { animation-delay: 0.2s; }
+    .pulse-dot:nth-child(3) { animation-delay: 0.4s; }
+    pre code { white-space: pre; word-break: break-word; }
+    .hljs { background: transparent !important; padding: 0 !important; }
+
+    /* Data tables in artifact cards */
+    table.data-table { border-collapse: collapse; font-size: 0.8rem; }
+    table.data-table th, table.data-table td { border: 1px solid #374151; padding: 5px 10px; text-align: left; }
+    table.data-table th { background: #1f2937; font-weight: 600; color: #d1d5db; position: sticky; top: 0; }
+    table.data-table tr:nth-child(even) { background: #111827; }
+    table.data-table tr:hover { background: #1e1b4b; }
+    table.data-table td { color: #d1d5db; }
+
+    /* Markdown content inside assistant bubbles */
+    .markdown-body p { margin: 0.4em 0; }
+    .markdown-body p:first-child { margin-top: 0; }
+    .markdown-body p:last-child { margin-bottom: 0; }
+    .markdown-body strong { font-weight: 600; color: #e5e7eb; }
+    .markdown-body em { font-style: italic; }
+    .markdown-body code { background: #374151; padding: 0.1em 0.35em; border-radius: 3px; font-size: 0.85em; font-family: ui-monospace, monospace; }
+    .markdown-body pre { background: #0d1117; padding: 0.75em; border-radius: 6px; overflow-x: auto; margin: 0.5em 0; }
+    .markdown-body pre code { background: transparent; padding: 0; font-size: 0.85em; }
+    .markdown-body ul, .markdown-body ol { padding-left: 1.5em; margin: 0.4em 0; }
+    .markdown-body ul { list-style-type: disc; }
+    .markdown-body ol { list-style-type: decimal; }
+    .markdown-body li { margin: 0.2em 0; }
+    .markdown-body li > p { margin: 0; }
+    .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 { font-weight: 600; margin: 0.6em 0 0.3em; color: #f3f4f6; }
+    .markdown-body h1 { font-size: 1.25em; }
+    .markdown-body h2 { font-size: 1.1em; }
+    .markdown-body h3 { font-size: 1.0em; }
+    .markdown-body blockquote { border-left: 3px solid #4b5563; padding-left: 0.75em; color: #9ca3af; margin: 0.5em 0; }
+    .markdown-body table { border-collapse: collapse; margin: 0.5em 0; font-size: 0.85em; }
+    .markdown-body table th, .markdown-body table td { border: 1px solid #374151; padding: 0.25em 0.5em; }
+    .markdown-body table th { background: #1f2937; font-weight: 600; }
+    .markdown-body a { color: #818cf8; text-decoration: underline; }
+    .markdown-body hr { border-color: #374151; margin: 0.75em 0; }
+
+    .sidebar-item.active { background: #312e81; color: #c7d2fe; }
+    #chat-messages::-webkit-scrollbar { width: 6px; }
+    #chat-messages::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
+    #chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .artifact-card { border-left: 3px solid #6366f1; }
+    .tab-btn.active { background: #4f46e5; color: white; }
+    .tab-btn { transition: all 0.15s; }
+
+    /* Diagnostics timeline */
+    .timing-bar { height: 12px; border-radius: 6px; overflow: hidden; display: flex; }
+    .timing-bar .llm { background: #6366f1; }
+    .timing-bar .tool { background: #f59e0b; }
+  </style>
+</head>
+<body class="bg-gray-900 h-screen flex overflow-hidden text-gray-100">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="w-64 bg-gray-800 border-r border-gray-700 flex flex-col flex-shrink-0">
+    <div class="p-4 border-b border-gray-700">
+      <button id="new-chat-btn" class="w-full bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-indigo-700 transition">
+        + New Chat
+      </button>
+    </div>
+    <div class="flex-1 overflow-y-auto p-2" id="conversation-list"></div>
+    <div class="p-3 border-t border-gray-700 text-xs text-gray-500 text-center">
+      DuckDB + Monty Sandbox
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 flex flex-col min-w-0">
+    <header class="bg-gray-800 border-b border-gray-700 px-6 py-3 flex items-center justify-between flex-shrink-0">
+      <h1 class="text-lg font-semibold text-gray-100">Data Analysis Agent</h1>
+      <span class="text-xs text-gray-500" id="status-indicator">Ready</span>
+    </header>
+
+    <div id="chat-messages" class="flex-1 overflow-y-auto px-6 py-4 space-y-4"></div>
+
+    <div class="border-t border-gray-700 bg-gray-800 px-6 py-4 flex-shrink-0">
+      <form id="chat-form" class="flex gap-3">
+        <input id="chat-input" type="text" placeholder="Ask a question about the data..."
+          class="flex-1 bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" autocomplete="off">
+        <button type="submit" id="send-btn"
+          class="bg-indigo-600 text-white rounded-lg px-5 py-2.5 text-sm font-medium hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+          Send
+        </button>
+      </form>
+      <p class="mt-2 text-xs text-gray-500">Datasets: titanic, bigmac, smoking, stocks, pokemon, stigler</p>
+    </div>
+  </main>
+
+  <script>
+    // Configure marked for markdown rendering
+    try { marked.setOptions({ breaks: true, gfm: true }); } catch(e) { console.warn('marked.setOptions failed:', e); }
+
+    // Safe markdown renderer with fallback
+    function safeMarkdown(text) {
+      try {
+        if (typeof marked !== 'undefined' && typeof marked.parse === 'function') {
+          return marked.parse(text);
+        }
+      } catch (e) {
+        console.error('marked.parse error:', e);
+      }
+      return escapeHtml(text).replace(/\n/g, '<br>');
+    }
+
+    const messagesEl = document.getElementById('chat-messages');
+    const form = document.getElementById('chat-form');
+    const input = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('send-btn');
+    const statusEl = document.getElementById('status-indicator');
+    const convListEl = document.getElementById('conversation-list');
+    const newChatBtn = document.getElementById('new-chat-btn');
+
+    let currentConversationId = null;
+    let isStreaming = false;
+    let currentBubble = null;
+    let currentBubbleText = '';
+
+    // --- Conversation sidebar ---
+    async function loadConversations() {
+      try {
+        const res = await fetch('api/conversations');
+        const convs = await res.json();
+        convListEl.innerHTML = '';
+        for (const c of convs) {
+          const div = document.createElement('div');
+          div.className = `sidebar-item p-2.5 rounded-lg cursor-pointer text-sm text-gray-300 hover:bg-gray-700 truncate ${c.id === currentConversationId ? 'active' : ''}`;
+          div.textContent = c.title;
+          div.onclick = () => loadConversation(c.id);
+          convListEl.appendChild(div);
+        }
+      } catch(e) { /* ignore */ }
+    }
+
+    async function loadConversation(id) {
+      currentConversationId = id;
+      messagesEl.innerHTML = '';
+      resetBubble();
+      try {
+        const res = await fetch(`api/conversations/${id}`);
+        const data = await res.json();
+        for (const msg of data.messages) {
+          if (msg.role === 'user') {
+            appendUserMessage(msg.content);
+          } else {
+            appendFullAssistantMessage(msg.content);
+          }
+        }
+        for (const a of data.artifacts) {
+          renderArtifactCard(a);
+        }
+      } catch(e) { console.error(e); }
+      loadConversations();
+      scrollToBottom();
+    }
+
+    newChatBtn.onclick = () => {
+      currentConversationId = null;
+      messagesEl.innerHTML = '';
+      resetBubble();
+      loadConversations();
+      input.focus();
+    };
+
+    // --- Bubble management ---
+    function resetBubble() {
+      currentBubble = null;
+      currentBubbleText = '';
+    }
+
+    // --- Message rendering ---
+    function appendUserMessage(text) {
+      const div = document.createElement('div');
+      div.className = 'message-enter flex justify-end';
+      div.innerHTML = `<div class="bg-indigo-600 text-white rounded-2xl rounded-br-md px-4 py-2.5 max-w-[75%] text-sm whitespace-pre-wrap">${escapeHtml(text)}</div>`;
+      messagesEl.appendChild(div);
+    }
+
+    function createAssistantBubble() {
+      currentBubbleText = '';
+      const wrapper = document.createElement('div');
+      wrapper.className = 'message-enter flex justify-start';
+      const bubble = document.createElement('div');
+      bubble.className = 'markdown-body bg-gray-800 border border-gray-700 rounded-2xl rounded-bl-md px-4 py-2.5 max-w-[85%] text-sm text-gray-200 shadow-sm leading-relaxed';
+      wrapper.appendChild(bubble);
+      messagesEl.appendChild(wrapper);
+      return bubble;
+    }
+
+    function appendAssistantText(text) {
+      if (!currentBubble) currentBubble = createAssistantBubble();
+      currentBubbleText += text;
+      currentBubble.innerHTML = safeMarkdown(currentBubbleText);
+      // Highlight any code blocks within the markdown
+      currentBubble.querySelectorAll('pre code').forEach(el => {
+        if (!el.dataset.highlighted) {
+          hljs.highlightElement(el);
+          el.dataset.highlighted = 'true';
+        }
+      });
+      scrollToBottom();
+    }
+
+    function appendFullAssistantMessage(text) {
+      // Used when loading from history — renders complete markdown at once
+      const bubble = createAssistantBubble();
+      bubble.innerHTML = safeMarkdown(text);
+      bubble.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+      resetBubble();
+    }
+
+    function appendStatus(message) {
+      let el = document.getElementById('status-bubble');
+      if (!el) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'message-enter flex justify-start';
+        wrapper.id = 'status-wrapper';
+        wrapper.innerHTML = `<div id="status-bubble" class="bg-indigo-950 border border-indigo-800 rounded-2xl rounded-bl-md px-4 py-2.5 text-sm text-indigo-300 shadow-sm flex items-center gap-2">
+          <span class="pulse-dot inline-block w-1.5 h-1.5 bg-indigo-400 rounded-full"></span>
+          <span class="pulse-dot inline-block w-1.5 h-1.5 bg-indigo-400 rounded-full"></span>
+          <span class="pulse-dot inline-block w-1.5 h-1.5 bg-indigo-400 rounded-full"></span>
+          <span id="status-text" class="ml-1"></span>
+        </div>`;
+        messagesEl.appendChild(wrapper);
+        el = document.getElementById('status-bubble');
+      }
+      document.getElementById('status-text').textContent = message;
+      statusEl.textContent = message;
+      scrollToBottom();
+    }
+
+    function removeStatus() {
+      const el = document.getElementById('status-wrapper');
+      if (el) el.remove();
+    }
+
+    // --- Artifact card with tabs: Table / Code / Raw ---
+    function renderArtifactCard(artifact) {
+      resetBubble();
+      const wrapper = document.createElement('div');
+      wrapper.className = 'message-enter flex justify-start w-full';
+
+      const card = document.createElement('div');
+      card.className = 'artifact-card bg-gray-800 border border-gray-700 rounded-xl shadow-sm max-w-[92%] w-full overflow-hidden';
+
+      // Tabs header
+      const tabBar = document.createElement('div');
+      tabBar.className = 'flex items-center gap-1 px-3 py-2 border-b border-gray-700';
+      tabBar.style.backgroundColor = '#1a1f2e';
+
+      const hasTable = artifact.result_type === 'table' && artifact.result_json;
+      const hasResult = artifact.result_json;
+      const hasError = artifact.error;
+
+      const tabs = [];
+      if (hasTable) tabs.push({ id: 'table', label: 'Table' });
+      else if (artifact.result_type === 'scalar' && hasResult) tabs.push({ id: 'result', label: 'Value' });
+      else if (artifact.result_type === 'dict' && hasResult) tabs.push({ id: 'result', label: 'Details' });
+      else if (hasResult) tabs.push({ id: 'result', label: 'Result' });
+      if (hasError) tabs.push({ id: 'error', label: 'Error' });
+      tabs.push({ id: 'code', label: 'Code' });
+      if (hasResult) tabs.push({ id: 'raw', label: 'Raw JSON' });
+
+      // Artifact UID badge
+      const uidBadge = document.createElement('span');
+      uidBadge.className = 'ml-auto text-[10px] font-mono text-gray-500 select-all';
+      uidBadge.textContent = artifact.id.slice(0, 8);
+      uidBadge.title = artifact.id;
+
+      // Replay button
+      const replayBtn = document.createElement('button');
+      replayBtn.className = 'ml-2 text-xs text-indigo-400 hover:text-indigo-300 font-medium';
+      replayBtn.textContent = 'Replay';
+      replayBtn.onclick = (e) => { e.stopPropagation(); replayArtifact(artifact.id); };
+
+      const panels = {};
+
+      tabs.forEach((tab, i) => {
+        const btn = document.createElement('button');
+        btn.className = `tab-btn px-3 py-1 rounded-md text-xs font-medium ${i === 0 ? 'active' : 'text-gray-400 hover:bg-gray-700'}`;
+        btn.textContent = tab.label;
+        btn.onclick = () => {
+          tabBar.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-gray-400'); });
+          btn.classList.add('active'); btn.classList.remove('text-gray-400');
+          Object.values(panels).forEach(p => p.style.display = 'none');
+          panels[tab.id].style.display = 'block';
+        };
+        tabBar.appendChild(btn);
+      });
+
+      tabBar.appendChild(uidBadge);
+      tabBar.appendChild(replayBtn);
+      card.appendChild(tabBar);
+
+      // --- Table panel ---
+      if (hasTable) {
+        const panel = document.createElement('div');
+        panel.className = 'overflow-auto max-h-[400px]';
+        const data = JSON.parse(artifact.result_json);
+        if (Array.isArray(data) && data.length > 0 && typeof data[0] === 'object') {
+          const cols = Object.keys(data[0]);
+          const headerRow = cols.map(c => `<th>${escapeHtml(c)}</th>`).join('');
+          const bodyRows = data.slice(0, 100).map(row =>
+            '<tr>' + cols.map(c => `<td>${escapeHtml(String(row[c] ?? ''))}</td>`).join('') + '</tr>'
+          ).join('');
+          const truncNote = data.length > 100 ? `<div class="px-3 py-1 text-xs text-gray-500 border-t border-gray-700">Showing 100 of ${data.length} rows</div>` : '';
+          panel.innerHTML = `<table class="data-table w-full"><thead><tr>${headerRow}</tr></thead><tbody>${bodyRows}</tbody></table>${truncNote}`;
+        }
+        card.appendChild(panel);
+        panels['table'] = panel;
+      } else if (hasResult && !hasError) {
+        const panel = document.createElement('div');
+        const data = JSON.parse(artifact.result_json);
+
+        if (artifact.result_type === 'scalar') {
+          // Styled metric card — large centered value with muted type label
+          const displayVal = typeof data === 'string' ? data : JSON.stringify(data);
+          const typeLabel = typeof data === 'string' ? 'text' : typeof data;
+          panel.className = 'p-6 flex flex-col items-center justify-center';
+          panel.innerHTML = `<div class="text-4xl font-bold text-gray-100 tracking-tight">${escapeHtml(displayVal)}</div>
+            <div class="mt-1 text-xs text-gray-500 uppercase tracking-wider">${escapeHtml(typeLabel)}</div>`;
+        } else if (artifact.result_type === 'dict' && typeof data === 'object' && data !== null && !Array.isArray(data)) {
+          // 2-column key-value table
+          panel.className = 'overflow-auto max-h-[400px]';
+          const rows = Object.entries(data).map(([k, v]) => {
+            const valStr = (typeof v === 'object' && v !== null) ? JSON.stringify(v) : String(v ?? '');
+            return `<tr><td class="font-medium text-gray-300">${escapeHtml(k)}</td><td>${escapeHtml(valStr)}</td></tr>`;
+          }).join('');
+          panel.innerHTML = `<table class="data-table w-full"><thead><tr><th>Property</th><th>Value</th></tr></thead><tbody>${rows}</tbody></table>`;
+        } else if (artifact.result_type === 'other' && Array.isArray(data) && data.length > 0 && data.every(v => typeof v !== 'object')) {
+          // Single-column table for list of primitives
+          panel.className = 'overflow-auto max-h-[400px]';
+          const rows = data.slice(0, 100).map(v => `<tr><td>${escapeHtml(String(v ?? ''))}</td></tr>`).join('');
+          const truncNote = data.length > 100 ? `<div class="px-3 py-1 text-xs text-gray-500 border-t border-gray-700">Showing 100 of ${data.length} items</div>` : '';
+          panel.innerHTML = `<table class="data-table w-full"><thead><tr><th>Value</th></tr></thead><tbody>${rows}</tbody></table>${truncNote}`;
+        } else {
+          // Fallback: formatted JSON
+          panel.className = 'p-4 text-sm text-gray-300';
+          panel.innerHTML = `<pre class="whitespace-pre-wrap">${escapeHtml(typeof data === 'string' ? data : JSON.stringify(data, null, 2))}</pre>`;
+        }
+
+        card.appendChild(panel);
+        panels['result'] = panel;
+      }
+
+      // --- Error panel ---
+      if (hasError) {
+        const panel = document.createElement('div');
+        panel.className = 'p-4 text-sm text-red-400 bg-red-950';
+        panel.textContent = artifact.error;
+        panel.style.display = tabs[0].id === 'error' ? 'block' : 'none';
+        card.appendChild(panel);
+        panels['error'] = panel;
+      }
+
+      // --- Code panel ---
+      const codePanel = document.createElement('div');
+      codePanel.style.display = tabs[0].id === 'code' ? 'block' : 'none';
+      codePanel.className = 'bg-[#0d1117]';
+      const pre = document.createElement('pre');
+      pre.className = 'p-4 overflow-auto max-h-[400px] text-sm';
+      const codeEl = document.createElement('code');
+      codeEl.className = 'language-python';
+      codeEl.textContent = artifact.code;
+      pre.appendChild(codeEl);
+      codePanel.appendChild(pre);
+      hljs.highlightElement(codeEl);
+      card.appendChild(codePanel);
+      panels['code'] = codePanel;
+
+      // --- Raw JSON panel ---
+      if (hasResult) {
+        const rawPanel = document.createElement('div');
+        rawPanel.style.display = 'none';
+        rawPanel.className = 'bg-[#0d1117]';
+        const rawPre = document.createElement('pre');
+        rawPre.className = 'p-4 overflow-auto max-h-[400px] text-sm';
+        const rawCode = document.createElement('code');
+        rawCode.className = 'language-json';
+        rawCode.textContent = JSON.stringify(JSON.parse(artifact.result_json), null, 2);
+        rawPre.appendChild(rawCode);
+        rawPanel.appendChild(rawPre);
+        hljs.highlightElement(rawCode);
+        card.appendChild(rawPanel);
+        panels['raw'] = rawPanel;
+      }
+
+      wrapper.appendChild(card);
+      messagesEl.appendChild(wrapper);
+      scrollToBottom();
+    }
+
+    function appendCodeBlock(code) {
+      resetBubble();
+      const wrapper = document.createElement('div');
+      wrapper.className = 'message-enter flex justify-start w-full code-preview';
+      wrapper.innerHTML = `
+        <details class="bg-[#0d1117] rounded-xl max-w-[85%] shadow-sm w-full border border-gray-700">
+          <summary class="px-4 py-2 cursor-pointer text-xs text-gray-400 hover:text-gray-200 font-mono">Code preview</summary>
+          <pre class="px-4 pb-3 overflow-auto max-h-[300px] text-sm"><code class="language-python">${escapeHtml(code)}</code></pre>
+        </details>`;
+      messagesEl.appendChild(wrapper);
+      wrapper.querySelectorAll('code').forEach(el => hljs.highlightElement(el));
+      scrollToBottom();
+    }
+
+    function appendError(error) {
+      resetBubble();
+      const wrapper = document.createElement('div');
+      wrapper.className = 'message-enter flex justify-start';
+      wrapper.innerHTML = `<div class="bg-red-950 border border-red-800 text-red-300 rounded-xl px-4 py-2.5 max-w-[85%] text-sm">${escapeHtml(error)}</div>`;
+      messagesEl.appendChild(wrapper);
+      scrollToBottom();
+    }
+
+    // --- Diagnostics panel ---
+    function renderDiagnostics(timing) {
+      if (!timing || !timing.total_ms) return;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'message-enter flex justify-start w-full';
+
+      const details = document.createElement('details');
+      details.className = 'bg-gray-800 border border-gray-700 rounded-xl max-w-[92%] w-full overflow-hidden';
+
+      const totalSec = (timing.total_ms / 1000).toFixed(1);
+      const summary = document.createElement('summary');
+      summary.className = 'px-4 py-2.5 cursor-pointer text-xs text-gray-400 hover:text-gray-200 font-mono flex items-center gap-2';
+      summary.innerHTML = `<span class="text-gray-500">Diagnostics</span> <span class="text-indigo-400">${totalSec}s</span> <span class="text-gray-600">|</span> <span>${timing.turns} turn${timing.turns !== 1 ? 's' : ''}</span> <span class="text-gray-600">|</span> <span>${timing.tool_calls} tool call${timing.tool_calls !== 1 ? 's' : ''}</span>`;
+
+      const content = document.createElement('div');
+      content.className = 'px-4 pb-3 space-y-3';
+
+      // Timeline bar
+      if (timing.spans && timing.spans.length > 0 && timing.total_ms > 0) {
+        const bar = document.createElement('div');
+        bar.className = 'timing-bar';
+        const legend = [];
+
+        for (const span of timing.spans) {
+          const pct = Math.max(1, (span.duration_ms / timing.total_ms) * 100);
+          const seg = document.createElement('div');
+          seg.className = span.type === 'llm' ? 'llm' : 'tool';
+          seg.style.width = pct + '%';
+          seg.title = `${span.name}: ${(span.duration_ms / 1000).toFixed(1)}s`;
+          bar.appendChild(seg);
+        }
+        content.appendChild(bar);
+
+        // Legend
+        const legendEl = document.createElement('div');
+        legendEl.className = 'flex gap-4 text-[10px] text-gray-400 font-mono';
+        legendEl.innerHTML = `
+          <span class="flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-sm bg-indigo-500"></span> LLM</span>
+          <span class="flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-sm bg-amber-500"></span> Tool</span>
+        `;
+        content.appendChild(legendEl);
+      }
+
+      // Span details
+      const spanList = document.createElement('div');
+      spanList.className = 'text-xs font-mono text-gray-400 space-y-0.5';
+      if (timing.spans) {
+        for (const span of timing.spans) {
+          const sec = (span.duration_ms / 1000).toFixed(1);
+          const icon = span.type === 'llm' ? '&#9632;' : '&#9632;';
+          const color = span.type === 'llm' ? 'text-indigo-400' : 'text-amber-400';
+          const line = document.createElement('div');
+          line.innerHTML = `<span class="${color}">${icon}</span> ${span.name} <span class="text-gray-500">${sec}s</span>`;
+          spanList.appendChild(line);
+        }
+      }
+
+      // Tool execution details
+      if (timing.tool_details && timing.tool_details.length > 0) {
+        for (const td of timing.tool_details) {
+          const sec = (td.duration_ms / 1000).toFixed(1);
+          const status = td.has_error ? '<span class="text-red-400">error</span>' : '<span class="text-green-400">ok</span>';
+          const line = document.createElement('div');
+          line.className = 'pl-3';
+          line.innerHTML = `sandbox: ${sec}s ${status}`;
+          spanList.appendChild(line);
+        }
+      }
+      content.appendChild(spanList);
+
+      details.appendChild(summary);
+      details.appendChild(content);
+      wrapper.appendChild(details);
+      messagesEl.appendChild(wrapper);
+      scrollToBottom();
+    }
+
+    // --- Chat submission ---
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const msg = input.value.trim();
+      if (!msg || isStreaming) return;
+
+      isStreaming = true;
+      sendBtn.disabled = true;
+      statusEl.textContent = 'Connecting...';
+      input.value = '';
+      resetBubble();
+
+      appendUserMessage(msg);
+      appendStatus('Thinking...');
+
+      try {
+        const res = await fetch('api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ conversation_id: currentConversationId, message: msg }),
+        });
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          // Normalize \r\n to \n for cross-platform SSE compatibility
+          buffer += decoder.decode(value, { stream: true }).replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+          while (true) {
+            const eventEnd = buffer.indexOf('\n\n');
+            if (eventEnd === -1) break;
+
+            const eventBlock = buffer.slice(0, eventEnd);
+            buffer = buffer.slice(eventEnd + 2);
+
+            let eventType = 'message';
+            let eventData = '';
+
+            for (const line of eventBlock.split('\n')) {
+              if (line.startsWith('event:')) {
+                eventType = line.slice(6).trim();
+              } else if (line.startsWith('data:')) {
+                const val = line.charAt(5) === ' ' ? line.slice(6) : line.slice(5);
+                eventData += (eventData ? '\n' : '') + val;
+              }
+            }
+
+            // Skip keepalive pings and empty messages
+            if (eventType === 'ping' || (eventType === 'message' && !eventData)) continue;
+
+            // console.log('[SSE]', eventType, eventData.substring(0, 80));
+
+            try {
+              switch (eventType) {
+                case 'init':
+                  const initData = JSON.parse(eventData);
+                  if (initData.conversation_id) currentConversationId = initData.conversation_id;
+                  break;
+
+                case 'text':
+                  removeStatus();
+                  appendAssistantText(eventData);
+                  break;
+
+                case 'status':
+                  appendStatus(eventData);
+                  break;
+
+                case 'code':
+                  removeStatus();
+                  appendCodeBlock(eventData);
+                  break;
+
+                case 'artifact':
+                  const artifact = JSON.parse(eventData);
+                  document.querySelectorAll('.code-preview').forEach(el => el.remove());
+                  renderArtifactCard(artifact);
+                  break;
+
+                case 'error':
+                  removeStatus();
+                  appendError(eventData);
+                  break;
+
+                case 'done':
+                  removeStatus();
+                  const doneData = JSON.parse(eventData);
+                  if (doneData.timing) renderDiagnostics(doneData.timing);
+                  break;
+              }
+            } catch (switchErr) {
+              console.error('[SSE] Error handling event:', eventType, switchErr);
+            }
+          }
+        }
+
+        removeStatus();
+
+      } catch(err) {
+        removeStatus();
+        appendError('Connection error: ' + err.message);
+      }
+
+      resetBubble();
+      isStreaming = false;
+      sendBtn.disabled = false;
+      statusEl.textContent = 'Ready';
+      loadConversations();
+      scrollToBottom();
+    };
+
+    // --- Replay ---
+    async function replayArtifact(artifactId) {
+      try {
+        const res = await fetch(`api/artifacts/${artifactId}/replay`, { method: 'POST' });
+        const data = await res.json();
+        renderArtifactCard({
+          id: artifactId,
+          code: data.code,
+          result_json: data.result_json,
+          result_type: data.result_type,
+          error: data.error,
+        });
+      } catch(err) {
+        appendError('Replay failed: ' + err.message);
+      }
+    }
+
+    // --- Utilities ---
+    function escapeHtml(str) {
+      const el = document.createElement('span');
+      el.textContent = str;
+      return el.innerHTML;
+    }
+
+    function scrollToBottom() {
+      requestAnimationFrame(() => { messagesEl.scrollTop = messagesEl.scrollHeight; });
+    }
+
+    loadConversations();
+    input.focus();
+  </script>
+</body>
+</html>
