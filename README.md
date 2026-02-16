@@ -101,6 +101,22 @@ src/sandbox_agent/
 static/index.html        — Chat UI (Tailwind CSS, vanilla JS, SSE)
 ```
 
+## Agent affordances
+
+The agent communicates through a small set of SSE event types streamed to the frontend:
+
+| Event | Source | Description |
+|-------|--------|-------------|
+| `text` | Claude `TextBlock` | Narration, analysis, or explanation |
+| `code` | Claude `ToolUseBlock` | Python code about to run in the sandbox |
+| `artifact` | Orchestration | Execution result (table, dict, scalar, or error) paired with the code that produced it |
+| `status` | Orchestration | Hardcoded progress indicators ("Running code in sandbox...", "Analyzing results...") |
+| `done` | Orchestration | End-of-turn signal with artifact IDs and timing data |
+
+Claude itself only emits two kinds of content blocks — text and tool calls. The orchestration layer (`agent/client.py`) inspects each block, routes it to the appropriate SSE event type, and manages the execute → result → resume loop via the Claude Agent SDK. Status messages are not LLM-controlled; they're fixed strings emitted at known points in the execution pipeline.
+
+The frontend renders each turn as a sequence of discrete phases (text, code+result, diagnostics) with subtle visual separators, preserving the order the agent produced them.
+
 ## Stack
 
 - **LLM**: Claude via [Claude Agent SDK](https://github.com/anthropics/claude-agent-sdk)
