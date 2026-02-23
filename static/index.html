@@ -377,6 +377,31 @@
     .send-btn:hover { opacity: 0.8; }
     .send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
+    /* ── Mode toggle ── */
+    .mode-toggle {
+      display: inline-flex;
+      border-radius: 9999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+    }
+    .mode-btn {
+      padding: 0.25rem 0.75rem;
+      font-size: 0.7rem;
+      font-weight: 500;
+      font-family: inherit;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .mode-btn:hover { color: var(--text-secondary); }
+    .mode-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
     /* ── Scrollbar ── */
     #chat-messages::-webkit-scrollbar { width: 6px; }
     #chat-messages::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
@@ -390,7 +415,7 @@
       <button id="new-chat-btn" class="new-chat-btn">+ New Chat</button>
     </div>
     <div class="flex-1 overflow-y-auto p-2" id="conversation-list"></div>
-    <div class="p-3 text-xs text-center" style="border-top: 1px solid var(--border); color: var(--text-muted)">
+    <div id="sidebar-footer" class="p-3 text-xs text-center" style="border-top: 1px solid var(--border); color: var(--text-muted)">
       DuckDB + Monty Sandbox
     </div>
   </aside>
@@ -412,6 +437,10 @@
         <div class="input-container">
           <input id="chat-input" type="text" placeholder="Ask about your data..."
             class="chat-input" autocomplete="off">
+          <div class="mode-toggle" id="mode-toggle">
+            <button type="button" class="mode-btn active" data-mode="standard">Standard</button>
+            <button type="button" class="mode-btn" data-mode="codemode">Code Mode</button>
+          </div>
           <button type="submit" id="send-btn" class="send-btn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="19" x2="12" y2="5"></line>
@@ -445,6 +474,25 @@
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       setTheme(saved || (prefersDark ? 'dark' : 'light'));
     })();
+
+    // ── Mode management ──
+    let currentMode = localStorage.getItem('chatMode') || 'standard';
+
+    function setMode(mode) {
+      currentMode = mode;
+      localStorage.setItem('chatMode', mode);
+      document.querySelectorAll('#mode-toggle .mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+      const footer = document.getElementById('sidebar-footer');
+      footer.textContent = mode === 'codemode' ? 'Code Mode MCP' : 'DuckDB + Monty Sandbox';
+    }
+
+    document.getElementById('mode-toggle').addEventListener('click', (e) => {
+      const btn = e.target.closest('.mode-btn');
+      if (btn) setMode(btn.dataset.mode);
+    });
+    setMode(currentMode);
 
     // ── Markdown config ──
     try { marked.setOptions({ breaks: true, gfm: true }); } catch(e) { console.warn('marked.setOptions failed:', e); }
@@ -880,7 +928,7 @@
         const res = await fetch('api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ conversation_id: currentConversationId, message: msg }),
+          body: JSON.stringify({ conversation_id: currentConversationId, message: msg, mode: currentMode }),
         });
 
         const reader = res.body.getReader();

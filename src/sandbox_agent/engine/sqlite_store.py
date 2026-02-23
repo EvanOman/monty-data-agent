@@ -7,6 +7,7 @@ SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS conversations (
     id TEXT PRIMARY KEY,
     title TEXT NOT NULL DEFAULT 'New conversation',
+    mode TEXT NOT NULL DEFAULT 'standard',
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
 );
@@ -65,26 +66,28 @@ class SQLiteStore:
 
     # --- Conversations ---
 
-    async def create_conversation(self, title: str = "New conversation") -> dict:
+    async def create_conversation(
+        self, title: str = "New conversation", mode: str = "standard"
+    ) -> dict:
         cid = _uuid()
         now = _now()
         await self.db.execute(
-            "INSERT INTO conversations (id, title, created_at, updated_at) VALUES (?, ?, ?, ?)",
-            (cid, title, now, now),
+            "INSERT INTO conversations (id, title, mode, created_at, updated_at) VALUES (?, ?, ?, ?, ?)",
+            (cid, title, mode, now, now),
         )
         await self.db.commit()
-        return {"id": cid, "title": title, "created_at": now, "updated_at": now}
+        return {"id": cid, "title": title, "mode": mode, "created_at": now, "updated_at": now}
 
     async def list_conversations(self) -> list[dict]:
         cursor = await self.db.execute(
-            "SELECT id, title, created_at, updated_at FROM conversations ORDER BY updated_at DESC"
+            "SELECT id, title, mode, created_at, updated_at FROM conversations ORDER BY updated_at DESC"
         )
         rows = await cursor.fetchall()
         return [dict(r) for r in rows]
 
     async def get_conversation(self, conversation_id: str) -> dict | None:
         cursor = await self.db.execute(
-            "SELECT id, title, created_at, updated_at FROM conversations WHERE id = ?",
+            "SELECT id, title, mode, created_at, updated_at FROM conversations WHERE id = ?",
             (conversation_id,),
         )
         row = await cursor.fetchone()

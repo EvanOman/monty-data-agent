@@ -16,8 +16,8 @@ from claude_agent_sdk import (
 )
 
 from ..config import MAX_AGENT_TURNS, MODEL
-from ..sandbox.executor import ExecutionResult, execute_code
-from ..sandbox.functions import ExternalFunctions
+from ..engine.executor import ExecutionResult, execute_code
+from ..engine.functions import ExternalFunctions
 from .prompts import build_system_prompt
 
 logger = logging.getLogger(__name__)

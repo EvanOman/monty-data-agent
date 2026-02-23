@@ -5,8 +5,8 @@ import logging
 from fastapi import APIRouter, HTTPException, Request
 from sse_starlette.sse import EventSourceResponse
 
-from ..sandbox.executor import execute_code
-from ..sandbox.functions import ExternalFunctions
+from ..engine.executor import execute_code
+from ..engine.functions import ExternalFunctions
 from .models import ChatRequest
 from .sse import (
     sse_artifact,
@@ -28,19 +28,27 @@ async def chat_endpoint(req: ChatRequest, request: Request):
     agent_client = request.app.state.agent_client
     sqlite = request.app.state.sqlite_store
 
+    mode = req.mode
+
     conversation_id = req.conversation_id
     if not conversation_id:
-        conv = await sqlite.create_conversation()
+        conv = await sqlite.create_conversation(mode=mode)
         conversation_id = conv["id"]
 
     await sqlite.add_message(conversation_id, "user", req.message)
+
+    # Select client based on mode
+    if mode == "codemode":
+        client = request.app.state.codemode_client
+    else:
+        client = agent_client
 
     async def event_generator():
         yield sse_init({"conversation_id": conversation_id})
 
         full_text_parts = []
         try:
-            async for event in agent_client.chat(conversation_id, req.message):
+            async for event in client.chat(conversation_id, req.message):
                 if event.type == "text":
                     yield sse_text(event.data)
                     full_text_parts.append(event.data)

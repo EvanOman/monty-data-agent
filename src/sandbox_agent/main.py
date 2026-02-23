@@ -6,9 +6,10 @@ from fastapi.staticfiles import StaticFiles
 
 from .agent.client import AgentClient
 from .api.routes import router
+from .codemode.client import CodeModeClient
 from .config import DATA_DIR, ROOT_PATH, SQLITE_PATH, STATIC_DIR
-from .data.duckdb_store import DuckDBStore
-from .data.sqlite_store import SQLiteStore
+from .engine.duckdb_store import DuckDBStore
+from .engine.sqlite_store import SQLiteStore
 
 logging.basicConfig(
     level=logging.INFO,
@@ -35,9 +36,13 @@ async def lifespan(app: FastAPI):
     schema_context = duckdb_store.get_schema_context()
     agent_client.set_schema_context(schema_context)
 
+    logger.info("Initializing Code Mode client...")
+    codemode_client = CodeModeClient(sqlite_store)
+
     app.state.duckdb_store = duckdb_store
     app.state.sqlite_store = sqlite_store
     app.state.agent_client = agent_client
+    app.state.codemode_client = codemode_client
 
     logger.info("Startup complete — ready to serve")
     yield
@@ -45,6 +50,7 @@ async def lifespan(app: FastAPI):
     # Shutdown
     logger.info("Shutting down...")
     await agent_client.close()
+    await codemode_client.close()
     await sqlite_store.close()
     duckdb_store.close()
 

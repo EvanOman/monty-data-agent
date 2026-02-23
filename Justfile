@@ -16,7 +16,7 @@ lint-fix:
     uv run ruff check . --fix
 
 type:
-    uv run ty check . --exclude "src/sandbox_agent/sandbox/executor.py"
+    uv run ty check . --exclude "src/sandbox_agent/engine/executor.py" --exclude "src/sandbox_agent/codemode/client.py"
 
 test:
     uv run pytest

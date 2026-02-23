@@ -1,4 +1,4 @@
-from sandbox_agent.sandbox.executor import execute_code
+from sandbox_agent.engine.executor import execute_code
 
 
 def test_simple_expression(ext_functions):

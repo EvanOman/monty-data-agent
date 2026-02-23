@@ -1,9 +1,9 @@
 import pytest
 import pytest_asyncio
 
-from sandbox_agent.data.duckdb_store import DuckDBStore
-from sandbox_agent.data.sqlite_store import SQLiteStore
-from sandbox_agent.sandbox.functions import ExternalFunctions
+from sandbox_agent.engine.duckdb_store import DuckDBStore
+from sandbox_agent.engine.functions import ExternalFunctions
+from sandbox_agent.engine.sqlite_store import SQLiteStore
 
 
 @pytest.fixture

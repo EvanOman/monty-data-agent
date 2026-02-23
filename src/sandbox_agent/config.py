@@ -8,6 +8,7 @@ SQLITE_PATH = DATA_DIR / "store.db"
 
 PORT = int(os.environ.get("PORT", "19876"))
 MODEL = os.environ.get("MODEL", "claude-sonnet-4-5-20250929")
+CODEMODE_MODEL = os.environ.get("CODEMODE_MODEL", "claude-sonnet-4-5-20250929")
 ROOT_PATH = os.environ.get("ROOT_PATH", "")
 MAX_MONTY_DURATION_SECS = 30
 MAX_AGENT_TURNS = 25
