@@ -4,24 +4,25 @@ import asyncio
 import json
 import logging
 import time
-from collections.abc import AsyncIterable, Callable, Coroutine
+from collections.abc import Callable, Coroutine
 from dataclasses import dataclass, field
 from typing import Any
 
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.messages import (
-    AgentStreamEvent,
+    FinalResultEvent,
     FunctionToolCallEvent,
-    FunctionToolResultEvent,
     ModelMessage,
     ModelRequest,
     ModelResponse,
+    PartDeltaEvent,
     TextPart,
+    TextPartDelta,
     UserPromptPart,
 )
 
 from ..agent.prompts import build_system_prompt
-from ..config import MAX_AGENT_TURNS, PYDANTIC_AI_MODEL
+from ..config import PYDANTIC_AI_MODEL
 from ..engine.functions import ExternalFunctions
 from ..shared import ChatEvent, ToolExecutor
 
@@ -45,7 +46,7 @@ def create_agent(system_prompt: str) -> Agent[AgentDeps, str]:
         PYDANTIC_AI_MODEL,
         system_prompt=system_prompt,
         deps_type=AgentDeps,
-        max_result_retries=MAX_AGENT_TURNS,
+        end_strategy="exhaustive",
     )
 
     @agent.tool
@@ -100,7 +101,12 @@ class PydanticAIClient:
         self._agent = create_agent(system_prompt)
 
     async def chat(self, conversation_id: str, user_message: str):
-        """Yield ChatEvent objects as the agent processes the message."""
+        """Yield ChatEvent objects as the agent processes the message.
+
+        Uses agent.iter() for node-by-node control of the agent loop,
+        which correctly handles multi-turn tool calling across all model
+        providers (Anthropic, OpenAI, etc.).
+        """
         assert self._agent is not None, "Must call set_schema_context() before chat()"
 
         event_queue: asyncio.Queue[tuple[str, str | None]] = asyncio.Queue()
@@ -132,46 +138,81 @@ class PydanticAIClient:
         turn_count = 0
         tool_call_count = 0
 
-        async def event_stream_handler(
-            ctx: RunContext[AgentDeps],
-            event_stream: AsyncIterable[AgentStreamEvent],
-        ) -> None:
-            nonlocal turn_count, tool_call_count
-            async for event in event_stream:
-                if isinstance(event, FunctionToolCallEvent):
-                    tool_call_count += 1
-                elif isinstance(event, FunctionToolResultEvent):
-                    pass  # tool results already handled via event_callback
-
         async def run_agent():
-            """Run the Pydantic AI agent in a background task."""
-            nonlocal turn_count
+            """Run the Pydantic AI agent loop node-by-node in a background task."""
+            nonlocal turn_count, tool_call_count
             try:
                 await event_queue.put(("status", "Agent is thinking..."))
-                last_span_time = time.time()
 
-                async with self._agent.run_stream(
+                async with self._agent.iter(
                     user_message,
                     deps=deps,
                     message_history=message_history,
-                    event_stream_handler=event_stream_handler,
-                ) as result:
-                    turn_count += 1
-                    t_llm_start = last_span_time
+                ) as run:
+                    async for node in run:
+                        if Agent.is_model_request_node(node):
+                            # Model is generating a response — stream text deltas
+                            turn_count += 1
+                            t_turn_start = time.time()
 
-                    async for delta in result.stream_text(delta=True):
-                        now = time.time()
-                        # Record first LLM span on first text delta
-                        if not timing_spans:
+                            async with node.stream(run.ctx) as request_stream:
+                                async for event in request_stream:
+                                    if isinstance(event, PartDeltaEvent):
+                                        if isinstance(event.delta, TextPartDelta):
+                                            await event_queue.put(
+                                                ("text", event.delta.content_delta)
+                                            )
+                                    elif isinstance(event, FinalResultEvent):
+                                        # Model is producing its final text answer;
+                                        # stream the remaining text via stream_text
+                                        break
+
+                                # Stream any remaining final text
+                                async for text in request_stream.stream_text(delta=True):
+                                    await event_queue.put(("text", text))
+
+                            t_turn_end = time.time()
                             timing_spans.append(
                                 {
                                     "name": f"LLM Turn {turn_count}",
                                     "type": "llm",
-                                    "start_ms": round((t_llm_start - t_chat_start) * 1000),
-                                    "duration_ms": round((now - t_llm_start) * 1000),
+                                    "start_ms": round(
+                                        (t_turn_start - t_chat_start) * 1000
+                                    ),
+                                    "duration_ms": round(
+                                        (t_turn_end - t_turn_start) * 1000
+                                    ),
                                 }
                             )
-                        await event_queue.put(("text", delta))
+
+                        elif Agent.is_call_tools_node(node):
+                            # Tools are being executed
+                            t_tool_start = time.time()
+                            await event_queue.put(("status", "Executing tools..."))
+
+                            async with node.stream(run.ctx) as handle_stream:
+                                async for event in handle_stream:
+                                    if isinstance(event, FunctionToolCallEvent):
+                                        tool_call_count += 1
+                                        logger.info(
+                                            "Tool call: %s",
+                                            event.part.tool_name,
+                                        )
+
+                            t_tool_end = time.time()
+                            timing_spans.append(
+                                {
+                                    "name": "Tool Execution",
+                                    "type": "tool",
+                                    "start_ms": round(
+                                        (t_tool_start - t_chat_start) * 1000
+                                    ),
+                                    "duration_ms": round(
+                                        (t_tool_end - t_tool_start) * 1000
+                                    ),
+                                }
+                            )
+                            await event_queue.put(("status", "Analyzing results..."))
 
             except Exception as e:
                 logger.exception("Error in Pydantic AI agent run")
