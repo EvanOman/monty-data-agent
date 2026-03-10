@@ -10,6 +10,7 @@ from .codemode.client import CodeModeClient
 from .config import DATA_DIR, ROOT_PATH, SQLITE_PATH, STATIC_DIR
 from .engine.duckdb_store import DuckDBStore
 from .engine.sqlite_store import SQLiteStore
+from .pydantic_agent.client import PydanticAIClient
 
 logging.basicConfig(
     level=logging.INFO,
@@ -39,10 +40,15 @@ async def lifespan(app: FastAPI):
     logger.info("Initializing Code Mode client...")
     codemode_client = CodeModeClient(sqlite_store)
 
+    logger.info("Initializing Pydantic AI client...")
+    pydantic_ai_client = PydanticAIClient(duckdb_store, sqlite_store)
+    pydantic_ai_client.set_schema_context(schema_context)
+
     app.state.duckdb_store = duckdb_store
     app.state.sqlite_store = sqlite_store
     app.state.agent_client = agent_client
     app.state.codemode_client = codemode_client
+    app.state.pydantic_ai_client = pydantic_ai_client
 
     logger.info("Startup complete — ready to serve")
     yield
@@ -51,6 +57,7 @@ async def lifespan(app: FastAPI):
     logger.info("Shutting down...")
     await agent_client.close()
     await codemode_client.close()
+    await pydantic_ai_client.close()
     await sqlite_store.close()
     duckdb_store.close()
 

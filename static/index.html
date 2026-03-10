@@ -377,30 +377,26 @@
     .send-btn:hover { opacity: 0.8; }
     .send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    /* ── Mode toggle ── */
-    .mode-toggle {
-      display: inline-flex;
+    /* ── Mode select ── */
+    .mode-select {
+      appearance: none;
+      -webkit-appearance: none;
       border-radius: 9999px;
-      overflow: hidden;
       border: 1px solid var(--border);
       background: var(--bg-surface);
-    }
-    .mode-btn {
-      padding: 0.25rem 0.75rem;
+      color: var(--text-secondary);
+      padding: 0.25rem 1.75rem 0.25rem 0.75rem;
       font-size: 0.7rem;
       font-weight: 500;
       font-family: inherit;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
       cursor: pointer;
       transition: all 0.15s;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23777' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.5rem center;
     }
-    .mode-btn:hover { color: var(--text-secondary); }
-    .mode-btn.active {
-      background: var(--accent);
-      color: #fff;
-    }
+    .mode-select:hover { color: var(--text-primary); border-color: var(--accent); }
+    .mode-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
 
     /* ── Scrollbar ── */
     #chat-messages::-webkit-scrollbar { width: 6px; }
@@ -437,10 +433,11 @@
         <div class="input-container">
           <input id="chat-input" type="text" placeholder="Ask about your data..."
             class="chat-input" autocomplete="off">
-          <div class="mode-toggle" id="mode-toggle">
-            <button type="button" class="mode-btn active" data-mode="standard">Standard</button>
-            <button type="button" class="mode-btn" data-mode="codemode">Code Mode</button>
-          </div>
+          <select id="mode-select" class="mode-select">
+            <option value="standard">Standard</option>
+            <option value="codemode">Code Mode</option>
+            <option value="pydantic_ai">Pydantic AI</option>
+          </select>
           <button type="submit" id="send-btn" class="send-btn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="19" x2="12" y2="5"></line>
@@ -477,20 +474,21 @@
 
     // ── Mode management ──
     let currentMode = localStorage.getItem('chatMode') || 'standard';
+    const modeLabels = {
+      'standard': 'DuckDB + Monty Sandbox',
+      'codemode': 'Code Mode MCP',
+      'pydantic_ai': 'Pydantic AI Agent',
+    };
 
     function setMode(mode) {
       currentMode = mode;
       localStorage.setItem('chatMode', mode);
-      document.querySelectorAll('#mode-toggle .mode-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.mode === mode);
-      });
-      const footer = document.getElementById('sidebar-footer');
-      footer.textContent = mode === 'codemode' ? 'Code Mode MCP' : 'DuckDB + Monty Sandbox';
+      document.getElementById('mode-select').value = mode;
+      document.getElementById('sidebar-footer').textContent = modeLabels[mode] || mode;
     }
 
-    document.getElementById('mode-toggle').addEventListener('click', (e) => {
-      const btn = e.target.closest('.mode-btn');
-      if (btn) setMode(btn.dataset.mode);
+    document.getElementById('mode-select').addEventListener('change', (e) => {
+      setMode(e.target.value);
     });
     setMode(currentMode);
 

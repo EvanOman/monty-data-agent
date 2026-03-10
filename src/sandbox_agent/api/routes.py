@@ -40,6 +40,8 @@ async def chat_endpoint(req: ChatRequest, request: Request):
     # Select client based on mode
     if mode == "codemode":
         client = request.app.state.codemode_client
+    elif mode == "pydantic_ai":
+        client = request.app.state.pydantic_ai_client
     else:
         client = agent_client
 

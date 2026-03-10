@@ -9,8 +9,8 @@ import anthropic
 from mcp import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
-from ..agent.client import ChatEvent
 from ..config import CODEMODE_MODEL
+from ..shared import ChatEvent
 
 logger = logging.getLogger(__name__)
 

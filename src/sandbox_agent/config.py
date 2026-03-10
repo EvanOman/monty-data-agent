@@ -11,5 +11,6 @@ MODEL = os.environ.get("MODEL", "claude-sonnet-4-5-20250929")
 CODEMODE_MODEL = os.environ.get("CODEMODE_MODEL", "claude-sonnet-4-5-20250929")
 ROOT_PATH = os.environ.get("ROOT_PATH", "")
 MAX_MONTY_DURATION_SECS = 30
+PYDANTIC_AI_MODEL = os.environ.get("PYDANTIC_AI_MODEL", "anthropic:claude-sonnet-4-5-20250929")
 MAX_AGENT_TURNS = 25
 SESSION_TTL_MINUTES = 30

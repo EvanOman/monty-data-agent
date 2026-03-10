@@ -2,7 +2,6 @@ import asyncio
 import json
 import logging
 import time
-from dataclasses import dataclass
 
 from claude_agent_sdk import (
     AssistantMessage,
@@ -16,21 +15,11 @@ from claude_agent_sdk import (
 )
 
 from ..config import MAX_AGENT_TURNS, MODEL
-from ..engine.executor import ExecutionResult, execute_code
 from ..engine.functions import ExternalFunctions
+from ..shared import ChatEvent, ToolExecutor
 from .prompts import build_system_prompt
 
 logger = logging.getLogger(__name__)
-
-MAX_LOAD_ROWS = 100
-
-
-@dataclass
-class ChatEvent:
-    """An event yielded during chat streaming."""
-
-    type: str  # "text", "code", "result", "artifact", "status", "error", "done"
-    data: str = ""
 
 
 class AgentClient:
@@ -40,14 +29,14 @@ class AgentClient:
         self._duckdb = duckdb_store
         self._sqlite = sqlite_store
         self._ext_functions = ExternalFunctions(duckdb_store)
+        self._tool_executor = ToolExecutor(self._ext_functions, sqlite_store)
         self._schema_context: str = ""
 
     def set_schema_context(self, ctx: str) -> None:
         self._schema_context = ctx
 
     def _make_tools(self):
-        ext = self._ext_functions
-        sqlite = self._sqlite
+        tool_executor = self._tool_executor
 
         @tool(
             "execute_code",
@@ -57,59 +46,15 @@ class AgentClient:
         async def execute_code_tool(args: dict) -> dict:
             code = args["code"]
 
-            # Push real-time status via the event queue
-            if self._event_queue:
-                await self._event_queue.put(("status", "Running code in sandbox..."))
+            async def on_event(etype: str, data: str) -> None:
+                if self._event_queue:
+                    await self._event_queue.put((etype, data))
 
-            t0 = time.time()
-            result: ExecutionResult = await asyncio.to_thread(execute_code, code, ext)
-            exec_ms = round((time.time() - t0) * 1000)
-
-            conv_id = self._current_conversation_id
-            artifact = await sqlite.save_artifact(
-                conversation_id=conv_id,
-                message_id=None,
-                code=code,
-                monty_state=result.monty_state,
-                result_json=result.output_json,
-                result_type=result.output_type,
-                error=result.error,
+            summary, artifact, timing = await tool_executor.run_code(
+                code, self._current_conversation_id, on_event=on_event
             )
             self._pending_artifacts.append(artifact)
-            self._tool_timings.append(
-                {
-                    "name": "execute_code",
-                    "duration_ms": exec_ms,
-                    "has_error": result.error is not None,
-                }
-            )
-
-            if result.error:
-                if self._event_queue:
-                    await self._event_queue.put(("status", "Code failed, agent may retry..."))
-                return {"content": [{"type": "text", "text": f"Error: {result.error}"}]}
-
-            uid = artifact["id"]
-            if result.output_type == "table" and result.output_json:
-                data = json.loads(result.output_json)
-                row_count = len(data)
-                cols = list(data[0].keys()) if data else []
-                summary = (
-                    f"Result UID: {uid}\nType: table\nRows: {row_count}\nColumns: {', '.join(cols)}"
-                )
-            elif result.output_type == "scalar" and result.output_json:
-                summary = f"Result UID: {uid}\nType: scalar (displayed as a metric)\nValue: {result.output_json}"
-            elif result.output_type == "dict" and result.output_json:
-                data = json.loads(result.output_json)
-                keys = ", ".join(data.keys()) if isinstance(data, dict) else ""
-                summary = (
-                    f"Result UID: {uid}\nType: dict (displayed as key-value pairs)\nKeys: {keys}"
-                )
-            elif result.output_json:
-                summary = f"Result UID: {uid}\nType: {result.output_type}\nData: {result.output_json[:200]}"
-            else:
-                summary = f"Result UID: {uid}\nType: none\nValue: None"
-
+            self._tool_timings.append(timing)
             return {"content": [{"type": "text", "text": summary}]}
 
         @tool(
@@ -118,41 +63,7 @@ class AgentClient:
             {"uid": str},
         )
         async def load_result_tool(args: dict) -> dict:
-            uid = args["uid"]
-            artifact = await sqlite.get_artifact(uid)
-            if not artifact:
-                return {
-                    "content": [{"type": "text", "text": f"Error: No result found for UID {uid}"}]
-                }
-
-            if artifact.get("error"):
-                return {
-                    "content": [{"type": "text", "text": f"Error in result: {artifact['error']}"}]
-                }
-
-            result_json = artifact.get("result_json")
-            if not result_json:
-                return {"content": [{"type": "text", "text": "Result: None"}]}
-
-            data = json.loads(result_json)
-
-            if isinstance(data, list) and data and isinstance(data[0], dict):
-                cols = list(data[0].keys())
-                truncated = data[:MAX_LOAD_ROWS]
-                header = " | ".join(cols)
-                sep = " | ".join(["---"] * len(cols))
-                rows_text = "\n".join(
-                    " | ".join(str(r.get(c, "")) for c in cols) for r in truncated
-                )
-                trunc_note = (
-                    f"\n\n(Showing {len(truncated)} of {len(data)} rows)"
-                    if len(data) > MAX_LOAD_ROWS
-                    else ""
-                )
-                text = f"{header}\n{sep}\n{rows_text}{trunc_note}"
-            else:
-                text = json.dumps(data, indent=2, default=str)
-
+            text = await tool_executor.load_result(args["uid"])
             return {"content": [{"type": "text", "text": text}]}
 
         return [execute_code_tool, load_result_tool]
