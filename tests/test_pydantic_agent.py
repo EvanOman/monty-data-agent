@@ -1,6 +1,5 @@
 """Tests for shared ToolExecutor and PydanticAIClient message history conversion."""
 
-
 import pytest
 
 from sandbox_agent.pydantic_agent.client import _build_message_history

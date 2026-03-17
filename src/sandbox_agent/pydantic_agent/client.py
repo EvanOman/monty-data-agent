@@ -176,12 +176,8 @@ class PydanticAIClient:
                                 {
                                     "name": f"LLM Turn {turn_count}",
                                     "type": "llm",
-                                    "start_ms": round(
-                                        (t_turn_start - t_chat_start) * 1000
-                                    ),
-                                    "duration_ms": round(
-                                        (t_turn_end - t_turn_start) * 1000
-                                    ),
+                                    "start_ms": round((t_turn_start - t_chat_start) * 1000),
+                                    "duration_ms": round((t_turn_end - t_turn_start) * 1000),
                                 }
                             )
 
@@ -204,12 +200,8 @@ class PydanticAIClient:
                                 {
                                     "name": "Tool Execution",
                                     "type": "tool",
-                                    "start_ms": round(
-                                        (t_tool_start - t_chat_start) * 1000
-                                    ),
-                                    "duration_ms": round(
-                                        (t_tool_end - t_tool_start) * 1000
-                                    ),
+                                    "start_ms": round((t_tool_start - t_chat_start) * 1000),
+                                    "duration_ms": round((t_tool_end - t_tool_start) * 1000),
                                 }
                             )
                             await event_queue.put(("status", "Analyzing results..."))
