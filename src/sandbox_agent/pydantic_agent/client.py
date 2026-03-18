@@ -107,8 +107,10 @@ class PydanticAIClient:
         which correctly handles multi-turn tool calling across all model
         providers (Anthropic, OpenAI, etc.).
         """
-        assert self._agent is not None, "Must call set_schema_context() before chat()"
+        if self._agent is None:
+            raise RuntimeError("Must call set_schema_context() before chat()")
 
+        agent = self._agent
         event_queue: asyncio.Queue[tuple[str, str | None]] = asyncio.Queue()
         pending_artifacts: list[dict] = []
         tool_timings: list[dict] = []
@@ -144,7 +146,7 @@ class PydanticAIClient:
             try:
                 await event_queue.put(("status", "Agent is thinking..."))
 
-                async with self._agent.iter(
+                async with agent.iter(
                     user_message,
                     deps=deps,
                     message_history=message_history,
@@ -219,14 +221,8 @@ class PydanticAIClient:
 
             if event_type == "_sentinel":
                 break
-            elif event_type == "text":
-                yield ChatEvent(type="text", data=event_data)
-            elif event_type == "status":
-                yield ChatEvent(type="status", data=event_data)
-            elif event_type == "code":
-                yield ChatEvent(type="code", data=event_data)
-            elif event_type == "error":
-                yield ChatEvent(type="error", data=event_data)
+            elif event_data is not None:
+                yield ChatEvent(type=event_type, data=event_data)
 
         await agent_task
 

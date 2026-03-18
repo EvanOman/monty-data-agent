@@ -74,6 +74,11 @@ class TestBuildMessageHistory:
         assert isinstance(messages[2], ModelRequest)
 
         # Check content
+        from pydantic_ai.messages import TextPart, UserPromptPart
+
+        assert isinstance(messages[0].parts[0], UserPromptPart)
         assert messages[0].parts[0].content == "Hello"
+        assert isinstance(messages[1].parts[0], TextPart)
         assert messages[1].parts[0].content == "Hi there"
+        assert isinstance(messages[2].parts[0], UserPromptPart)
         assert messages[2].parts[0].content == "How are you?"
