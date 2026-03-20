@@ -1,0 +1,16 @@
+services:
+  temporal:
+    image: temporalio/auto-setup:latest
+    ports:
+      - "7233:7233"
+    environment:
+      - DB=sqlite
+
+  temporal-ui:
+    image: temporalio/ui:latest
+    ports:
+      - "18233:8080"
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+    depends_on:
+      - temporal

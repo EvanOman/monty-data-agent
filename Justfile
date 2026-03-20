@@ -33,3 +33,15 @@ install:
 # Run the development server
 serve:
     uv run uvicorn sandbox_agent.main:app --host 127.0.0.1 --port 19876 --reload --reload-dir src
+
+# Start the Temporal dev server (requires Docker)
+temporal-server:
+    docker compose -f docker-compose.temporal.yml up -d
+
+# Stop the Temporal dev server
+temporal-down:
+    docker compose -f docker-compose.temporal.yml down
+
+# Run the Temporal worker (connects to Temporal server)
+worker:
+    uv run python -m sandbox_agent.temporal

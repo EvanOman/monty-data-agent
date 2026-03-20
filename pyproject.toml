@@ -15,6 +15,7 @@ dependencies = [
     "anthropic>=0.52.0",
     "mcp[cli]>=1.9.0",
     "pydantic-ai[anthropic]>=0.2.0",
+    "temporalio>=1.20.0",
 ]
 
 [build-system]
