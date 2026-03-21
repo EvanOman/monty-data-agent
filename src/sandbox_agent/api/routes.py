@@ -44,6 +44,8 @@ async def chat_endpoint(req: ChatRequest, request: Request):
         client = request.app.state.pydantic_ai_client
     elif mode == "temporal":
         client = request.app.state.temporal_client
+    elif mode == "parallel":
+        client = request.app.state.parallel_client
     else:
         client = agent_client
 

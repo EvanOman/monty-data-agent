@@ -10,6 +10,7 @@ from .codemode.client import CodeModeClient
 from .config import DATA_DIR, ROOT_PATH, SQLITE_PATH, STATIC_DIR
 from .engine.duckdb_store import DuckDBStore
 from .engine.sqlite_store import SQLiteStore
+from .parallel.client import ParallelClient
 from .pydantic_agent.client import PydanticAIClient
 from .temporal.client import TemporalClient
 
@@ -49,12 +50,17 @@ async def lifespan(app: FastAPI):
     temporal_client = TemporalClient(sqlite_store)
     temporal_client.set_schema_context(schema_context)
 
+    logger.info("Initializing Parallel client...")
+    parallel_client = ParallelClient(duckdb_store, sqlite_store)
+    parallel_client.set_schema_context(schema_context)
+
     app.state.duckdb_store = duckdb_store
     app.state.sqlite_store = sqlite_store
     app.state.agent_client = agent_client
     app.state.codemode_client = codemode_client
     app.state.pydantic_ai_client = pydantic_ai_client
     app.state.temporal_client = temporal_client
+    app.state.parallel_client = parallel_client
 
     logger.info("Startup complete — ready to serve")
     yield
@@ -65,6 +71,7 @@ async def lifespan(app: FastAPI):
     await codemode_client.close()
     await pydantic_ai_client.close()
     await temporal_client.close()
+    await parallel_client.close()
     await sqlite_store.close()
     duckdb_store.close()
 
