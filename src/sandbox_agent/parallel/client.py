@@ -15,9 +15,16 @@ from anthropic import AsyncAnthropic
 from ..config import PARALLEL_MODEL as MODEL
 from ..engine.executor import execute_code
 from ..engine.functions import ExternalFunctions
+from ..planning import SYNTHESIZE_SYSTEM_PROMPT, build_plan_prompt, build_subtask_prompt
+from ..planning.helpers import (
+    chunk_text,
+    format_history_prompt,
+    format_result_summary,
+    parse_plan_json,
+    strip_code_fences,
+)
+from ..planning.models import SubTaskResult
 from ..shared import ChatEvent
-from ..temporal.models import ExecutionPlan, SubTask, SubTaskResult
-from ..temporal.prompts import SYNTHESIZE_SYSTEM_PROMPT, build_plan_prompt, build_subtask_prompt
 from .dag import execute_dag
 
 logger = logging.getLogger(__name__)
@@ -89,7 +96,7 @@ class ParallelClient:
 
         all_results = await execute_dag(plan, run_task)
 
-        # Emit artifacts as they come back
+        # Emit artifacts
         for task_id, result in all_results.items():
             if result.error:
                 yield ChatEvent(type="status", data=f"Task '{task_id}' failed: {result.error}")
@@ -123,16 +130,8 @@ class ParallelClient:
             logger.exception("Synthesis failed")
             synthesis = f"Error during synthesis: {e}"
 
-        # Stream synthesis text
-        words = synthesis.split(" ")
-        chunk = []
-        for word in words:
-            chunk.append(word)
-            if len(" ".join(chunk)) >= 40:
-                yield ChatEvent(type="text", data=" ".join(chunk) + " ")
-                chunk = []
-        if chunk:
-            yield ChatEvent(type="text", data=" ".join(chunk))
+        for text_chunk in chunk_text(synthesis):
+            yield ChatEvent(type="text", data=text_chunk)
 
         t_end = time.time()
         total_ms = round((t_end - t_start) * 1000)
@@ -162,46 +161,19 @@ class ParallelClient:
             ),
         )
 
-    async def _plan(self, question: str, history: list[dict]) -> ExecutionPlan:
+    async def _plan(self, question: str, history: list[dict]):
         """Call the LLM to decompose the question into subtasks."""
         plan_prompt = build_plan_prompt(self._schema_context)
-
-        parts = []
-        if history:
-            parts.append("## Conversation History\n")
-            for msg in history:
-                parts.append(f"**{msg.get('role', 'user')}**: {msg.get('content', '')}\n")
-            parts.append("\n## Current Question\n")
-        parts.append(question)
+        history_prefix = format_history_prompt(history)
 
         response = await self._anthropic.messages.create(
             model=MODEL,
             max_tokens=2048,
             system=plan_prompt,
-            messages=[{"role": "user", "content": "\n".join(parts)}],
+            messages=[{"role": "user", "content": f"{history_prefix}{question}"}],
         )
 
-        raw = response.content[0].text.strip()
-        if raw.startswith("```"):
-            raw = raw.split("\n", 1)[1]
-            if raw.endswith("```"):
-                raw = raw[: raw.rfind("```")]
-            raw = raw.strip()
-
-        parsed = json.loads(raw)
-        tasks = [
-            SubTask(
-                task_id=t["task_id"],
-                description=t["description"],
-                datasets=t.get("datasets", []),
-                depends_on=t.get("depends_on", []),
-            )
-            for t in parsed["tasks"]
-        ]
-
-        plan = ExecutionPlan(tasks=tasks)
-        logger.info("Plan: %d tasks in %d batches", len(tasks), len(plan.batches()))
-        return plan
+        return parse_plan_json(response.content[0].text)
 
     async def _execute_subtask(
         self,
@@ -231,13 +203,7 @@ class ParallelClient:
             messages=[{"role": "user", "content": "\n".join(parts)}],
         )
 
-        code = response.content[0].text.strip()
-        if code.startswith("```"):
-            code = code.split("\n", 1)[1]
-            if code.endswith("```"):
-                code = code[: code.rfind("```")]
-            code = code.strip()
-
+        code = strip_code_fences(response.content[0].text)
         logger.info("Subtask %s: executing code (%d chars)", task_id, len(code))
         result = await asyncio.to_thread(execute_code, code, ext_functions)
 
@@ -260,7 +226,7 @@ class ParallelClient:
                 error=result.error,
             )
 
-        summary = _format_summary(artifact["id"], result)
+        summary = format_result_summary(artifact["id"], result)
         return SubTaskResult(
             task_id=task_id,
             artifact_uid=artifact["id"],
@@ -288,24 +254,3 @@ class ParallelClient:
 
     async def close(self) -> None:
         pass
-
-
-def _format_summary(uid: str, result) -> str:
-    """Build a result summary string for use by downstream tasks."""
-    if result.output_type == "table" and result.output_json:
-        data = json.loads(result.output_json)
-        row_count = len(data)
-        cols = list(data[0].keys()) if data else []
-        preview = json.dumps(data[:5], indent=2) if data else "[]"
-        return (
-            f"Result UID: {uid}\nType: table\nRows: {row_count}\n"
-            f"Columns: {', '.join(cols)}\nPreview:\n{preview}"
-        )
-    elif result.output_type == "scalar" and result.output_json:
-        return f"Result UID: {uid}\nType: scalar\nValue: {result.output_json}"
-    elif result.output_type == "dict" and result.output_json:
-        return f"Result UID: {uid}\nType: dict\nData: {result.output_json}"
-    elif result.output_json:
-        return f"Result UID: {uid}\nType: {result.output_type}\nData: {result.output_json[:500]}"
-    else:
-        return f"Result UID: {uid}\nType: none"

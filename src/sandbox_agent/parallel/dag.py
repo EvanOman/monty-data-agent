@@ -10,7 +10,7 @@ import logging
 from collections.abc import Awaitable, Callable
 from graphlib import TopologicalSorter
 
-from ..temporal.models import ExecutionPlan, SubTaskResult
+from ..planning.models import ExecutionPlan, SubTaskResult
 
 logger = logging.getLogger(__name__)
 

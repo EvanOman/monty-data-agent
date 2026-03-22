@@ -1,61 +1,26 @@
-"""Data models for the Temporal Plan-Execute-Synthesize pipeline."""
+"""Temporal-specific data models.
+
+Core models (SubTask, ExecutionPlan, SubTaskResult) are re-exported from
+the shared planning module. Temporal-specific activity input dataclasses
+are defined here.
+"""
 
 from dataclasses import dataclass, field
 
+# Re-export shared models so existing imports continue to work
+from ..planning.models import ExecutionPlan, SubTask, SubTaskResult
 
-@dataclass
-class SubTask:
-    """A single sub-task in an execution plan."""
-
-    task_id: str
-    description: str
-    datasets: list[str] = field(default_factory=list)
-    depends_on: list[str] = field(default_factory=list)
-
-
-@dataclass
-class ExecutionPlan:
-    """A DAG of sub-tasks produced by the planning phase."""
-
-    tasks: list[SubTask] = field(default_factory=list)
-
-    def batches(self) -> list[list[SubTask]]:
-        """Topologically sort tasks into batches that can run in parallel.
-
-        Each batch contains tasks whose dependencies are all satisfied by
-        earlier batches. Tasks within a batch are independent and can run
-        concurrently.
-        """
-        completed: set[str] = set()
-        remaining = list(self.tasks)
-        batches: list[list[SubTask]] = []
-
-        while remaining:
-            # Find tasks whose dependencies are all completed
-            ready = [t for t in remaining if all(d in completed for d in t.depends_on)]
-            if not ready:
-                # Circular dependency or missing dep — just run everything remaining
-                batches.append(remaining)
-                break
-            batches.append(ready)
-            completed.update(t.task_id for t in ready)
-            remaining = [t for t in remaining if t.task_id not in completed]
-
-        return batches
+__all__ = [
+    "ExecutionPlan",
+    "ExecuteSubtaskInput",
+    "PlanInput",
+    "SubTask",
+    "SubTaskResult",
+    "SynthesizeInput",
+]
 
 
-@dataclass
-class SubTaskResult:
-    """The result of executing a single sub-task."""
-
-    task_id: str
-    artifact_uid: str
-    summary: str
-    result_type: str
-    error: str | None = None
-
-
-# --- Activity input dataclasses (single-dataclass-per-activity pattern) ---
+# --- Temporal activity input dataclasses (single-dataclass-per-activity pattern) ---
 
 
 @dataclass

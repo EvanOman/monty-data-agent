@@ -10,8 +10,10 @@ from .codemode.client import CodeModeClient
 from .config import DATA_DIR, ROOT_PATH, SQLITE_PATH, STATIC_DIR
 from .engine.duckdb_store import DuckDBStore
 from .engine.sqlite_store import SQLiteStore
+from .graph_state.client import GraphStateClient
 from .parallel.client import ParallelClient
 from .pydantic_agent.client import PydanticAIClient
+from .pydantic_graph_mode.client import PydanticGraphClient
 from .temporal.client import TemporalClient
 
 logging.basicConfig(
@@ -54,6 +56,14 @@ async def lifespan(app: FastAPI):
     parallel_client = ParallelClient(duckdb_store, sqlite_store)
     parallel_client.set_schema_context(schema_context)
 
+    logger.info("Initializing Pydantic Graph client...")
+    pydantic_graph_client = PydanticGraphClient(duckdb_store, sqlite_store)
+    pydantic_graph_client.set_schema_context(schema_context)
+
+    logger.info("Initializing Graph State client...")
+    graph_state_client = GraphStateClient(duckdb_store, sqlite_store)
+    graph_state_client.set_schema_context(schema_context)
+
     app.state.duckdb_store = duckdb_store
     app.state.sqlite_store = sqlite_store
     app.state.agent_client = agent_client
@@ -61,6 +71,8 @@ async def lifespan(app: FastAPI):
     app.state.pydantic_ai_client = pydantic_ai_client
     app.state.temporal_client = temporal_client
     app.state.parallel_client = parallel_client
+    app.state.pydantic_graph_client = pydantic_graph_client
+    app.state.graph_state_client = graph_state_client
 
     logger.info("Startup complete — ready to serve")
     yield
@@ -72,6 +84,8 @@ async def lifespan(app: FastAPI):
     await pydantic_ai_client.close()
     await temporal_client.close()
     await parallel_client.close()
+    await pydantic_graph_client.close()
+    await graph_state_client.close()
     await sqlite_store.close()
     duckdb_store.close()
 
