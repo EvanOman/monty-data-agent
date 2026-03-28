@@ -147,13 +147,17 @@ async def run_eval(base_url: str, num_runs: int) -> dict:
     for query in QUERIES:
         query_id = query["id"]
         question = query["question"]
-        all_results[query_id] = {"question": question, "expected_type": query["expected_type"], "runs": {}}
+        all_results[query_id] = {
+            "question": question,
+            "expected_type": query["expected_type"],
+            "runs": {},
+        }
 
         for mode in MODES:
             mode_results = []
             print(f"\n  [{query_id}] {mode}: ", end="", flush=True)
 
-            for run_idx in range(num_runs):
+            for _run_idx in range(num_runs):
                 async with httpx.AsyncClient() as client:
                     result = await run_single_query(client, base_url, mode, question)
                     mode_results.append(result)
@@ -176,11 +180,17 @@ def compute_summary(all_results: dict) -> dict:
             failures = [r for r in runs if not r["success"]]
 
             avg_wall = sum(r["wall_time_s"] for r in successes) / len(successes) if successes else 0
-            avg_server = sum(r["server_time_ms"] for r in successes) / len(successes) if successes else 0
+            avg_server = (
+                sum(r["server_time_ms"] for r in successes) / len(successes) if successes else 0
+            )
             avg_turns = sum(r["turns"] for r in successes) / len(successes) if successes else 0
             avg_tools = sum(r["tool_calls"] for r in successes) / len(successes) if successes else 0
-            avg_artifacts = sum(r["artifact_count"] for r in successes) / len(successes) if successes else 0
-            avg_text_len = sum(r["text_length"] for r in successes) / len(successes) if successes else 0
+            avg_artifacts = (
+                sum(r["artifact_count"] for r in successes) / len(successes) if successes else 0
+            )
+            avg_text_len = (
+                sum(r["text_length"] for r in successes) / len(successes) if successes else 0
+            )
 
             # Plan details from successful runs
             plan_task_counts = []
@@ -196,7 +206,9 @@ def compute_summary(all_results: dict) -> dict:
                 "avg_tool_calls": round(avg_tools, 1),
                 "avg_artifacts": round(avg_artifacts, 1),
                 "avg_text_length": round(avg_text_len),
-                "avg_plan_tasks": round(sum(plan_task_counts) / len(plan_task_counts), 1) if plan_task_counts else "N/A",
+                "avg_plan_tasks": round(sum(plan_task_counts) / len(plan_task_counts), 1)
+                if plan_task_counts
+                else "N/A",
                 "errors": [e for r in failures for e in r.get("errors", [])],
             }
 
@@ -206,9 +218,9 @@ def compute_summary(all_results: dict) -> dict:
 def print_summary_table(summary: dict) -> None:
     """Print a formatted comparison table."""
     for query_id, modes in summary.items():
-        print(f"\n{'='*100}")
+        print(f"\n{'=' * 100}")
         print(f"  Query: {query_id}")
-        print(f"{'='*100}")
+        print(f"{'=' * 100}")
         print(
             f"  {'Mode':<22} {'Success':<10} {'Wall(s)':<10} {'Server(ms)':<12} "
             f"{'Turns':<8} {'Tools':<8} {'Arts':<8} {'Text':<8} {'Plan Tasks':<10}"
@@ -243,7 +255,9 @@ async def main():
             resp.raise_for_status()
     except Exception as e:
         print(f"ERROR: Cannot reach server at {base_url}: {e}")
-        print(f"Start the server with: PORT={args.port} uv run uvicorn sandbox_agent.main:app --port {args.port}")
+        print(
+            f"Start the server with: PORT={args.port} uv run uvicorn sandbox_agent.main:app --port {args.port}"
+        )
         sys.exit(1)
 
     print(f"Evaluation suite: {len(QUERIES)} queries x {len(MODES)} modes x {args.runs} runs")
