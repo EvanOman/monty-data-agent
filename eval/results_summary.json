@@ -1,0 +1,206 @@
+{
+  "simple": {
+    "standard": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 10.03,
+      "avg_server_time_ms": 9947,
+      "avg_turns": 3.0,
+      "avg_tool_calls": 1.0,
+      "avg_artifacts": 1.0,
+      "avg_text_length": 448,
+      "avg_plan_tasks": "N/A",
+      "errors": []
+    },
+    "codemode": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 12.91,
+      "avg_server_time_ms": 12846,
+      "avg_turns": 4.0,
+      "avg_tool_calls": 3.0,
+      "avg_artifacts": 1.0,
+      "avg_text_length": 524,
+      "avg_plan_tasks": "N/A",
+      "errors": []
+    },
+    "pydantic_ai": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 5.6,
+      "avg_server_time_ms": 5529,
+      "avg_turns": 2.0,
+      "avg_tool_calls": 1.0,
+      "avg_artifacts": 1.0,
+      "avg_text_length": 456,
+      "avg_plan_tasks": "N/A",
+      "errors": []
+    },
+    "parallel": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 7.67,
+      "avg_server_time_ms": 7538,
+      "avg_turns": 3.0,
+      "avg_tool_calls": 1.0,
+      "avg_artifacts": 1.0,
+      "avg_text_length": 537,
+      "avg_plan_tasks": 1.0,
+      "errors": []
+    },
+    "pydantic_graph_mode": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 7.56,
+      "avg_server_time_ms": 7499,
+      "avg_turns": 3.0,
+      "avg_tool_calls": 1.0,
+      "avg_artifacts": 1.0,
+      "avg_text_length": 592,
+      "avg_plan_tasks": "N/A",
+      "errors": []
+    },
+    "graph_state": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 7.6,
+      "avg_server_time_ms": 7548,
+      "avg_turns": 3.0,
+      "avg_tool_calls": 1.0,
+      "avg_artifacts": 1.0,
+      "avg_text_length": 684,
+      "avg_plan_tasks": "N/A",
+      "errors": []
+    }
+  },
+  "medium": {
+    "standard": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 27.69,
+      "avg_server_time_ms": 27630,
+      "avg_turns": 7.3,
+      "avg_tool_calls": 3.3,
+      "avg_artifacts": 3.3,
+      "avg_text_length": 1340,
+      "avg_plan_tasks": "N/A",
+      "errors": []
+    },
+    "codemode": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 31.61,
+      "avg_server_time_ms": 31568,
+      "avg_turns": 8.3,
+      "avg_tool_calls": 7.3,
+      "avg_artifacts": 4.3,
+      "avg_text_length": 1340,
+      "avg_plan_tasks": "N/A",
+      "errors": []
+    },
+    "pydantic_ai": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 10.51,
+      "avg_server_time_ms": 10420,
+      "avg_turns": 3.3,
+      "avg_tool_calls": 2.3,
+      "avg_artifacts": 2.3,
+      "avg_text_length": 1047,
+      "avg_plan_tasks": "N/A",
+      "errors": []
+    },
+    "parallel": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 12.22,
+      "avg_server_time_ms": 12103,
+      "avg_turns": 3.0,
+      "avg_tool_calls": 1.0,
+      "avg_artifacts": 1.0,
+      "avg_text_length": 975,
+      "avg_plan_tasks": 1.0,
+      "errors": []
+    },
+    "pydantic_graph_mode": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 13.62,
+      "avg_server_time_ms": 13570,
+      "avg_turns": 3.0,
+      "avg_tool_calls": 1.0,
+      "avg_artifacts": 1.0,
+      "avg_text_length": 1196,
+      "avg_plan_tasks": "N/A",
+      "errors": []
+    },
+    "graph_state": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 12.77,
+      "avg_server_time_ms": 12695,
+      "avg_turns": 3.0,
+      "avg_tool_calls": 1.0,
+      "avg_artifacts": 1.0,
+      "avg_text_length": 1114,
+      "avg_plan_tasks": "N/A",
+      "errors": []
+    }
+  },
+  "complex": {
+    "standard": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 45.49,
+      "avg_server_time_ms": 45416,
+      "avg_turns": 10.0,
+      "avg_tool_calls": 5.0,
+      "avg_artifacts": 5.0,
+      "avg_text_length": 2074,
+      "avg_plan_tasks": "N/A",
+      "errors": []
+    },
+    "codemode": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 87.01,
+      "avg_server_time_ms": 86957,
+      "avg_turns": 11.0,
+      "avg_tool_calls": 10.0,
+      "avg_artifacts": 6.3,
+      "avg_text_length": 1816,
+      "avg_plan_tasks": "N/A",
+      "errors": []
+    },
+    "pydantic_ai": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 23.34,
+      "avg_server_time_ms": 23255,
+      "avg_turns": 4.0,
+      "avg_tool_calls": 3.0,
+      "avg_artifacts": 3.0,
+      "avg_text_length": 2502,
+      "avg_plan_tasks": "N/A",
+      "errors": []
+    },
+    "parallel": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 29.62,
+      "avg_server_time_ms": 29559,
+      "avg_turns": 4.0,
+      "avg_tool_calls": 2.0,
+      "avg_artifacts": 2.0,
+      "avg_text_length": 1417,
+      "avg_plan_tasks": 2.0,
+      "errors": []
+    },
+    "pydantic_graph_mode": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 28.84,
+      "avg_server_time_ms": 28758,
+      "avg_turns": 4.0,
+      "avg_tool_calls": 2.0,
+      "avg_artifacts": 2.0,
+      "avg_text_length": 1609,
+      "avg_plan_tasks": "N/A",
+      "errors": []
+    },
+    "graph_state": {
+      "success_rate": "3/3",
+      "avg_wall_time_s": 25.39,
+      "avg_server_time_ms": 25341,
+      "avg_turns": 4.0,
+      "avg_tool_calls": 2.0,
+      "avg_artifacts": 2.0,
+      "avg_text_length": 1472,
+      "avg_plan_tasks": "N/A",
+      "errors": []
+    }
+  }
+}

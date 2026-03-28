@@ -20,16 +20,16 @@ without seeing the original question.
 
 Return ONLY valid JSON (no markdown fencing, no explanation) in this exact format:
 
-{
+{{
   "tasks": [
-    {
+    {{
       "task_id": "short_snake_case_id",
       "description": "Detailed description of what to compute",
       "datasets": ["table_name"],
       "depends_on": []
-    }
+    }}
   ]
-}
+}}
 
 ## Dataset Schema
 
