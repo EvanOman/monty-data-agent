@@ -17,7 +17,7 @@ from pydantic_graph import BaseNode, End, GraphRunContext
 from ..engine.executor import execute_code
 from ..engine.functions import ExternalFunctions
 from ..planning import SYNTHESIZE_SYSTEM_PROMPT, build_plan_prompt, build_subtask_prompt
-from ..planning.helpers import format_result_summary, parse_plan_json, strip_code_fences
+from ..planning.helpers import format_result_summary, get_text, parse_plan_json, strip_code_fences
 from ..planning.models import ExecutionPlan, SubTask, SubTaskResult
 
 logger = logging.getLogger(__name__)
@@ -70,7 +70,7 @@ class PlanNode(BaseNode[PipelineState, PipelineDeps, str]):
         )
 
         try:
-            state.plan = parse_plan_json(response.content[0].text)
+            state.plan = parse_plan_json(get_text(response))
         except Exception as e:
             logger.error("PlanNode: failed to parse plan: %s", e)
             return End(f"Sorry, I couldn't create an analysis plan. Error: {e}")
@@ -130,7 +130,7 @@ class ExecuteBatchNode(BaseNode[PipelineState, PipelineDeps, str]):
                     messages=[{"role": "user", "content": "\n".join(parts)}],
                 )
 
-                code = strip_code_fences(response.content[0].text)
+                code = strip_code_fences(get_text(response))
                 ext_functions = ExternalFunctions(deps.duckdb_store)
                 result = await asyncio.to_thread(execute_code, code, ext_functions)
 
@@ -199,4 +199,4 @@ class SynthesizeNode(BaseNode[PipelineState, PipelineDeps, str]):
             system=SYNTHESIZE_SYSTEM_PROMPT,
             messages=[{"role": "user", "content": "\n".join(parts)}],
         )
-        return End(response.content[0].text)
+        return End(get_text(response))

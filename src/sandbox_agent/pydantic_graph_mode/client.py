@@ -25,6 +25,7 @@ from ..planning.helpers import (
     chunk_text,
     format_history_prompt,
     format_result_summary,
+    get_text,
     parse_plan_json,
     strip_code_fences,
 )
@@ -185,7 +186,7 @@ async def _build_and_run_graph(deps: GraphDeps) -> str:
             messages=[{"role": "user", "content": f"{history_prefix}{ctx.inputs}"}],
         )
 
-        execution_plan = parse_plan_json(response.content[0].text)
+        execution_plan = parse_plan_json(get_text(response))
         n = len(execution_plan.tasks)
         await d.event_queue.put(("status", f"Plan: {n} subtask{'s' if n != 1 else ''} to execute"))
         return execution_plan.tasks
@@ -204,7 +205,7 @@ async def _build_and_run_graph(deps: GraphDeps) -> str:
             messages=[{"role": "user", "content": f"## Task\n{subtask.description}"}],
         )
 
-        code = strip_code_fences(response.content[0].text)
+        code = strip_code_fences(get_text(response))
         await d.event_queue.put(("code", code))
 
         result = await asyncio.to_thread(execute_code, code, d.ext_functions)
@@ -257,7 +258,7 @@ async def _build_and_run_graph(deps: GraphDeps) -> str:
             system=SYNTHESIZE_SYSTEM_PROMPT,
             messages=[{"role": "user", "content": "\n".join(parts)}],
         )
-        return response.content[0].text
+        return get_text(response)
 
     # Wire: start → plan → map(execute) → join → synthesize → end
     g.add_edge(g.start_node, plan)

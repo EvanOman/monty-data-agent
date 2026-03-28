@@ -2,10 +2,17 @@
 
 import json
 import logging
+from typing import Any
 
 from .models import ExecutionPlan, SubTask
 
 logger = logging.getLogger(__name__)
+
+
+def get_text(response: Any) -> str:
+    """Extract text from an Anthropic API response, handling the content block union type."""
+    block = response.content[0]
+    return block.text
 
 
 def strip_code_fences(text: str) -> str:

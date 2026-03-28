@@ -20,6 +20,7 @@ from ..planning.helpers import (
     chunk_text,
     format_history_prompt,
     format_result_summary,
+    get_text,
     parse_plan_json,
     strip_code_fences,
 )
@@ -173,7 +174,7 @@ class ParallelClient:
             messages=[{"role": "user", "content": f"{history_prefix}{question}"}],
         )
 
-        return parse_plan_json(response.content[0].text)
+        return parse_plan_json(get_text(response))
 
     async def _execute_subtask(
         self,
@@ -203,7 +204,7 @@ class ParallelClient:
             messages=[{"role": "user", "content": "\n".join(parts)}],
         )
 
-        code = strip_code_fences(response.content[0].text)
+        code = strip_code_fences(get_text(response))
         logger.info("Subtask %s: executing code (%d chars)", task_id, len(code))
         result = await asyncio.to_thread(execute_code, code, ext_functions)
 
@@ -250,7 +251,7 @@ class ParallelClient:
             system=SYNTHESIZE_SYSTEM_PROMPT,
             messages=[{"role": "user", "content": "\n".join(parts)}],
         )
-        return response.content[0].text
+        return get_text(response)
 
     async def close(self) -> None:
         pass

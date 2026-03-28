@@ -13,6 +13,7 @@ from temporalio import activity
 from ..config import TEMPORAL_MODEL as MODEL
 from ..engine.executor import execute_code
 from ..engine.functions import ExternalFunctions
+from ..planning.helpers import get_text
 from .models import (
     ExecuteSubtaskInput,
     ExecutionPlan,
@@ -51,7 +52,7 @@ async def plan_subtasks(input: PlanInput) -> ExecutionPlan:
         messages=[{"role": "user", "content": "\n".join(parts)}],
     )
 
-    raw = response.content[0].text.strip()
+    raw = get_text(response).strip()
     # Strip markdown fencing if the model wraps it
     if raw.startswith("```"):
         raw = raw.split("\n", 1)[1]
@@ -108,7 +109,7 @@ async def execute_subtask(input: ExecuteSubtaskInput) -> SubTaskResult:
         messages=[{"role": "user", "content": user_prompt}],
     )
 
-    code = response.content[0].text.strip()
+    code = get_text(response).strip()
     # Strip markdown fencing if present
     if code.startswith("```"):
         code = code.split("\n", 1)[1]
@@ -180,7 +181,7 @@ async def synthesize_results(input: SynthesizeInput) -> str:
         messages=[{"role": "user", "content": "\n".join(parts)}],
     )
 
-    return response.content[0].text
+    return get_text(response)
 
 
 def _format_summary(uid: str, result) -> str:
