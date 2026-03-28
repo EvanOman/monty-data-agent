@@ -1,0 +1,1541 @@
+{
+  "simple": {
+    "question": "What is the average age of Titanic passengers?",
+    "expected_type": "scalar",
+    "runs": {
+      "standard": [
+        {
+          "mode": "standard",
+          "success": true,
+          "wall_time_s": 11.38,
+          "server_time_ms": 11305,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 18,
+          "text_length": 554,
+          "text_preview": "I'll analyze the Titanic dataset to find the average age of passengers.Let me start by fetching the age data and calculating the mean age. I'll need to handle any missing values carefully.**The average age of Titanic passengers was 29.7 years old.**This is calculated from 714 passengers who had age data recorded. Interestingly, there are 177 passengers (about 20% of the dataset) with missing age information, which is common in historical datasets like this one. The average represents the typical",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Running code in sandbox...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 31
+        },
+        {
+          "mode": "standard",
+          "success": true,
+          "wall_time_s": 9.36,
+          "server_time_ms": 9317,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 15,
+          "text_length": 364,
+          "text_preview": "I'll find the average age of Titanic passengers by fetching the data and calculating the mean age.**The average age of Titanic passengers was 29.7 years old.**Out of 714 total passengers in the dataset, 714 had age information recorded, so we have complete age data for this analysis. This represents adults and children alike who were aboard the ill-fated voyage.",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Running code in sandbox...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 26
+        },
+        {
+          "mode": "standard",
+          "success": true,
+          "wall_time_s": 9.34,
+          "server_time_ms": 9218,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 19,
+          "text_length": 426,
+          "text_preview": "I'll analyze the Titanic dataset to find the average age of passengers.Let me fetch the age data and calculate the average:**The average age of Titanic passengers was 29.7 years old.**This calculation is based on **714 passengers** who had age data recorded. Note that about **177 passengers** had missing age information in the dataset, so the actual average might differ slightly if we had complete data for everyone aboard.",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Running code in sandbox...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 32
+        }
+      ],
+      "codemode": [
+        {
+          "mode": "codemode",
+          "success": true,
+          "wall_time_s": 14.86,
+          "server_time_ms": 14802,
+          "turns": 4,
+          "tool_calls": 3,
+          "artifact_count": 1,
+          "code_block_count": 12,
+          "text_length": 503,
+          "text_preview": "I'll help you findthe average age of Titanic passengers. Let me start by exploring what's available.Great! The Titanic dataset is available. Let me check its schema to understand the data structure.Perfect! The dataset has an \"age\" column. Now let me fetch the data and calculate the average age.The **average age of Titanic passengers is approximately 29.7 years**.This calculation is based on passengerswith recorded ages (some records may have missing age data, which were excluded from the averag",
+          "errors": [],
+          "status_messages": [
+            "Starting Code Mode...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking..."
+          ],
+          "plan": [],
+          "event_count": 34
+        },
+        {
+          "mode": "codemode",
+          "success": true,
+          "wall_time_s": 11.81,
+          "server_time_ms": 11757,
+          "turns": 4,
+          "tool_calls": 3,
+          "artifact_count": 1,
+          "code_block_count": 12,
+          "text_length": 545,
+          "text_preview": "I'll help you find the average ageof Titanic passengers. Let me start by exploring what's available.Great! Thetitanic dataset is available. Let me check its schema to see what columns are available.Perfect! Ican see there's an \"age\" column. Now let me fetch the data and calculate the average age.The **average age of Titanic passengers is approximately 29.7 years old**.This calculation is based on passengers who hadage information recorded. Some passengers in the dataset may have missing age valu",
+          "errors": [],
+          "status_messages": [
+            "Starting Code Mode...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking..."
+          ],
+          "plan": [],
+          "event_count": 34
+        },
+        {
+          "mode": "codemode",
+          "success": true,
+          "wall_time_s": 12.06,
+          "server_time_ms": 11978,
+          "turns": 4,
+          "tool_calls": 3,
+          "artifact_count": 1,
+          "code_block_count": 12,
+          "text_length": 523,
+          "text_preview": "I'll help you find the average ageof Titanic passengers. Let me start by exploring what's available.Great! Now let me check the schema of the titanic dataset to see what columns are available:Perfect! I can see there's an\"age\" column. Now let me fetch the data and calculate the average age:The**average age of Titanic passengers is approximately 29.7 years old**.This calculation is based on passengers who hadage information recorded. Some passengers had missing age data, which wereexcluded from t",
+          "errors": [],
+          "status_messages": [
+            "Starting Code Mode...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking..."
+          ],
+          "plan": [],
+          "event_count": 34
+        }
+      ],
+      "pydantic_ai": [
+        {
+          "mode": "pydantic_ai",
+          "success": true,
+          "wall_time_s": 6.14,
+          "server_time_ms": 6072,
+          "turns": 2,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 8,
+          "text_length": 544,
+          "text_preview": "I\u2019ll calculate the **averageage** from the Titanic dataset, making sure touse only passengers with a recordedage since missing ages would distort the result. I\u2019ll also return a couple of supporting countsso you can see howmuch data the average is basedon.## Average age of Titanic passengersThe **average age** is**29.7 years**.Acouple of useful details:- **Passengers with recorded age:** 714- The average is based only onrows where age is present.If youwant, I can also break this down by **sex**, ",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 41
+        },
+        {
+          "mode": "pydantic_ai",
+          "success": true,
+          "wall_time_s": 5.05,
+          "server_time_ms": 4969,
+          "turns": 2,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 4,
+          "text_length": 380,
+          "text_preview": "I\u2019ll calculate the **average age** from the Titanic dataset, making sure toexclude any passengers with missing age values sothe result reflects only knownages. Then I\u2019ll sharethe number directly andbriefly interpretit.The **average age of Titanic passengers** in the dataset is**29.7 years**.Thataverage is based on passengers with a recordedage, **excluding missing age values**.",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 28
+        },
+        {
+          "mode": "pydantic_ai",
+          "success": true,
+          "wall_time_s": 5.61,
+          "server_time_ms": 5546,
+          "turns": 2,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 8,
+          "text_length": 443,
+          "text_preview": "I'll calculate the **average passengerage** from the Titanic table, making sureto account for missing ages correctly since not every passenger has anage recorded. Then I\u2019ll report theresult clearly and note how many records it\u2019s basedon.The **average age of Titanic passengers is29.70 years**.- Based on **714** passengers with recorded ages- Outof **891** total passengers in the dataset**Note:** this excludes passengerswhose age is missing.",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 35
+        }
+      ],
+      "parallel": [
+        {
+          "mode": "parallel",
+          "success": true,
+          "wall_time_s": 7.94,
+          "server_time_ms": 7869,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 3,
+          "text_length": 437,
+          "text_preview": "# Average Age of Titanic PassengersThe**average age of Titanic passengers was29.7 years old**.This indicates that theTitanic's passenger manifest skewed relativelyyoung, with the typical passenger beingin their late twenties to early thirties.This demographic profile reflects the diversemix of travelers aboard \u2014 from young familiesseeking new opportunities in America toworking-age adults traveling for businessor immigration purposes.",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Executing 1 sub-tasks in 1 batches...",
+            "Completed: avg_passenger_age",
+            "Synthesizing results..."
+          ],
+          "plan": [
+            {
+              "task_id": "avg_passenger_age",
+              "description": "Calculate the average age of all passengers in the Titanic dataset, excluding null values",
+              "datasets": [
+                "titanic"
+              ],
+              "depends_on": []
+            }
+          ],
+          "event_count": 25
+        },
+        {
+          "mode": "parallel",
+          "success": true,
+          "wall_time_s": 8.58,
+          "server_time_ms": 8490,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 3,
+          "text_length": 714,
+          "text_preview": "# Titanic Passengers: Average Age AnalysisBasedon the analysis of the Titanic passengerdata, **the average age of passengers was29.7 years old**.This indicates that theTitanic's passengers were predominantlyyoung to middle-aged adults. The averageage of approximately **30 years** suggestsa relatively youthful passenger base, whichaligns with historical records showing thatmany passengers were emigrants seeking newopportunities, young families, and working-ageindividuals traveling for business or",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Executing 1 sub-tasks in 1 batches...",
+            "Completed: calc_avg_age",
+            "Synthesizing results..."
+          ],
+          "plan": [
+            {
+              "task_id": "calc_avg_age",
+              "description": "Calculate the average age of all passengers in the titanic dataset, excluding null values",
+              "datasets": [
+                "titanic"
+              ],
+              "depends_on": []
+            }
+          ],
+          "event_count": 33
+        },
+        {
+          "mode": "parallel",
+          "success": true,
+          "wall_time_s": 6.49,
+          "server_time_ms": 6254,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 3,
+          "text_length": 460,
+          "text_preview": "# Analysis SummaryBased on the Titanicpassenger data, **the average age of passengerswas 29.7 years**.This indicates that theTitanic carried a relatively young passengerpopulation, with the typical passenger beingin their late twenties to early thirties.This average age reflects the demographicsof early 20th-century transatlantic travel,which attracted a mix of young adults seekingnew opportunities, families emigrating toAmerica, and established travelers.",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Executing 1 sub-tasks in 1 batches...",
+            "Completed: calculate_average_age",
+            "Synthesizing results..."
+          ],
+          "plan": [
+            {
+              "task_id": "calculate_average_age",
+              "description": "Calculate the average age of all passengers in the titanic dataset, excluding null values",
+              "datasets": [
+                "titanic"
+              ],
+              "depends_on": []
+            }
+          ],
+          "event_count": 25
+        }
+      ],
+      "pydantic_graph_mode": [
+        {
+          "mode": "pydantic_graph_mode",
+          "success": true,
+          "wall_time_s": 6.93,
+          "server_time_ms": 6893,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 3,
+          "text_length": 406,
+          "text_preview": "# Analysis SummaryBased on the Titanicpassenger data analysis, **the average ageof passengers was approximately 29.7 yearsold**.This finding reveals that the Titaniccarried a relatively young passenger population,with the typical passenger being in theirlate twenties. This average age suggestsa mix of working-age adults, families, andyounger travelers who were aboard the vesselduring its fateful voyage.",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Decomposing question into subtasks...",
+            "Plan: 1 subtask to execute",
+            "Executing: Calculate the average age of all passengers in the titanic d...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 25
+        },
+        {
+          "mode": "pydantic_graph_mode",
+          "success": true,
+          "wall_time_s": 8.58,
+          "server_time_ms": 8527,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 3,
+          "text_length": 799,
+          "text_preview": "# Analysis Summary: Average Age of TitanicPassengersBased on the analysis of theTitanic passenger dataset, **the averageage of passengers was 29.7 years**.Thisindicates that the Titanic carried a relativelyyoung passenger population, with the typicalpassenger being in their late twenties.This age reflects the demographic makeupof early 20th-century trans-Atlantic travelers,which included a mix of young adults seekingopportunities in America, families, andworking-class immigrants alongside wealth",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Decomposing question into subtasks...",
+            "Plan: 1 subtask to execute",
+            "Executing: Calculate the average age of all passengers in the titanic d...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 36
+        },
+        {
+          "mode": "pydantic_graph_mode",
+          "success": true,
+          "wall_time_s": 7.18,
+          "server_time_ms": 7076,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 3,
+          "text_length": 570,
+          "text_preview": "# Analysis SummaryBased on the Titanicpassenger data analysis, **the average ageof passengers was 29.7 years**.This indicatesthat the Titanic's passenger manifest skewedrelatively young, with the typical passengerbeing in their late twenties to early thirties.This demographic profile aligns with historicalrecords showing that the ship carried amix of young immigrants seeking new opportunities,working-age adults, and families travelingtogether.The age of approximately **30years** represents the c",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Decomposing question into subtasks...",
+            "Plan: 1 subtask to execute",
+            "Executing: Calculate the average age of all passengers in the titanic d...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 31
+        }
+      ],
+      "graph_state": [
+        {
+          "mode": "graph_state",
+          "success": true,
+          "wall_time_s": 7.79,
+          "server_time_ms": 7755,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 3,
+          "text_length": 742,
+          "text_preview": "# Analysis Summary: Average Age of TitanicPassengersBased on the analysis of theTitanic passenger data, **the average ageof passengers was 29.7 years old**.Thisindicates that the Titanic carried a relativelyyoung passenger population, with the averagefalling just shy of 30 years. This age distributionreflects the demographics of early 20th-centurytransatlantic travel, which attracted amix of young immigrants seeking new opportunities,working-age adults traveling for businessor relocation, and fa",
+          "errors": [],
+          "status_messages": [
+            "Starting plan-execute-synthesize pipeline...",
+            "Planning analysis...",
+            "Executing 1 subtasks in 1 batches...",
+            "Running batch 1/1...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 34
+        },
+        {
+          "mode": "graph_state",
+          "success": true,
+          "wall_time_s": 7.94,
+          "server_time_ms": 7891,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 3,
+          "text_length": 759,
+          "text_preview": "# Average Age of Titanic PassengersBasedon the analysis of the Titanic passengerdata, **the average age was approximately29.7 years old**.This indicates that thetypical Titanic passenger was in their latetwenties to early thirties. The passengermanifest consisted primarily of **youngto middle-aged adults**, which aligns withthe historical context of the early 20thcentury transatlantic voyage \u2014 a journeyoften undertaken by working-age individualsseeking opportunities in America or travelingfor bu",
+          "errors": [],
+          "status_messages": [
+            "Starting plan-execute-synthesize pipeline...",
+            "Planning analysis...",
+            "Executing 1 subtasks in 1 batches...",
+            "Running batch 1/1...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 36
+        },
+        {
+          "mode": "graph_state",
+          "success": true,
+          "wall_time_s": 7.06,
+          "server_time_ms": 6997,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 3,
+          "text_length": 551,
+          "text_preview": "# Average Age of Titanic PassengersThe**average age of Titanic passengers wasapproximately 29.7 years old**.This indicatesthat the Titanic carried a relatively youngpassenger population, with the mean agefalling just shy of 30 years. This demographicprofile suggests the ship attracted a mixof working-age adults, young families, andimmigrants seeking new opportunities, whichwas typical of transatlantic passenger shipsduring that era.The precise average of**29.69 years** reflects data from passeng",
+          "errors": [],
+          "status_messages": [
+            "Starting plan-execute-synthesize pipeline...",
+            "Planning analysis...",
+            "Executing 1 subtasks in 1 batches...",
+            "Running batch 1/1...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 30
+        }
+      ]
+    }
+  },
+  "medium": {
+    "question": "Compare survival rates by passenger class on the Titanic. Which class had the highest survival rate?",
+    "expected_type": "table",
+    "runs": {
+      "standard": [
+        {
+          "mode": "standard",
+          "success": true,
+          "wall_time_s": 34.13,
+          "server_time_ms": 34076,
+          "turns": 8,
+          "tool_calls": 4,
+          "artifact_count": 4,
+          "code_block_count": 191,
+          "text_length": 1374,
+          "text_preview": "I'll analyze the Titanic survival rates by passenger class to see which class had the best chance of survival.**My approach:** I'll fetch all the passenger data, group them by class (1st, 2nd, 3rd), calculate survival rates for each class, and present them in a ranked table.Let me fix that syntax error - I need to initialize the dictionary properly:I see the issue - the sandbox doesn't support nested dictionary assignment that way. Let me use a simpler approach with tuples:Perfect! The results c",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Running code in sandbox...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 225
+        },
+        {
+          "mode": "standard",
+          "success": true,
+          "wall_time_s": 25.95,
+          "server_time_ms": 25906,
+          "turns": 7,
+          "tool_calls": 3,
+          "artifact_count": 3,
+          "code_block_count": 98,
+          "text_length": 1474,
+          "text_preview": "I'll analyze the Titanic survival rates by passenger class to see which class had the best chance of survival.Let me start by fetching the passenger data and calculating survival rates for each class:Let me fix the syntax - I need to use a different approach for nested dictionary access:I see - the sandbox doesn't support assignment to nested structures. Let me restructure the code:Perfect! Now let me interpret these results for you.## Key Findings**First class had the highest survival rate at 6",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Running code in sandbox...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 135
+        },
+        {
+          "mode": "standard",
+          "success": true,
+          "wall_time_s": 22.98,
+          "server_time_ms": 22909,
+          "turns": 7,
+          "tool_calls": 3,
+          "artifact_count": 3,
+          "code_block_count": 109,
+          "text_length": 1171,
+          "text_preview": "I'll analyze the Titanic survival rates by passenger class to see which class had the best chance of survival.Let me start by fetching the passenger data and calculating survival rates for each class.Let me fix that syntax error - I need to adjust how I'm initializing the nested dictionary:I see - the sandbox doesn't support subscript assignment. Let me use a different approach:Perfect! The results clearly show a stark difference in survival rates across passenger classes:## Key Findings**First ",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Running code in sandbox...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 139
+        }
+      ],
+      "codemode": [
+        {
+          "mode": "codemode",
+          "success": true,
+          "wall_time_s": 35.4,
+          "server_time_ms": 35336,
+          "turns": 9,
+          "tool_calls": 8,
+          "artifact_count": 5,
+          "code_block_count": 148,
+          "text_length": 1367,
+          "text_preview": "I'll help you analyze theTitanic survival rates by passenger class. Let me start by exploring what data is available.Great! The Titanic dataset has both `survived` and `pclass` (passenger class) columns. Let me also check what functionsare available.Nowlet me fetch the Titanic data and calculate survival rates by passenger class.Letme fix that syntax error:Isee the issue - I need to use a different approach for updating the values.Let me try again:Excellent! Now let me identifywhich class had th",
+          "errors": [],
+          "status_messages": [
+            "Starting Code Mode...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking..."
+          ],
+          "plan": [],
+          "event_count": 211
+        },
+        {
+          "mode": "codemode",
+          "success": true,
+          "wall_time_s": 28.48,
+          "server_time_ms": 28443,
+          "turns": 8,
+          "tool_calls": 7,
+          "artifact_count": 4,
+          "code_block_count": 98,
+          "text_length": 1322,
+          "text_preview": "I'll help you analyzesurvival rates by passenger class on the Titanic. Let me start by exploring what's available.Great! I can see the Titanic dataset has `survived` (survival status) and `pclass` (passengerclass) columns. Let me now check what functions are available.Nowlet me fetch the Titanic data and calculate survival rates by passenger class.Letme fix the syntax - I need to handle dictionary updates differently in this environment.Nowlet me identify which class had the highest survival rat",
+          "errors": [],
+          "status_messages": [
+            "Starting Code Mode...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking..."
+          ],
+          "plan": [],
+          "event_count": 151
+        },
+        {
+          "mode": "codemode",
+          "success": true,
+          "wall_time_s": 30.96,
+          "server_time_ms": 30925,
+          "turns": 8,
+          "tool_calls": 7,
+          "artifact_count": 4,
+          "code_block_count": 111,
+          "text_length": 1332,
+          "text_preview": "I'll help you analyzesurvival rates by passenger class on the Titanic. Let me start by exploring what data is available.Great! TheTitanic dataset is available. Let me check its schema:Perfect! I can see the dataset has `survived` (survival status) and `pclass` (passenger class) columns. Let me also checkwhat functions are available:Nowlet me fetch the Titanic data and calculate survival rates by passenger class:Letme fix the syntax - I need to work within the constraints of the sandbox:Excellent",
+          "errors": [],
+          "status_messages": [
+            "Starting Code Mode...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking..."
+          ],
+          "plan": [],
+          "event_count": 167
+        }
+      ],
+      "pydantic_ai": [
+        {
+          "mode": "pydantic_ai",
+          "success": true,
+          "wall_time_s": 9.6,
+          "server_time_ms": 9549,
+          "turns": 3,
+          "tool_calls": 2,
+          "artifact_count": 2,
+          "code_block_count": 44,
+          "text_length": 977,
+          "text_preview": "I\u2019ll compare the **survival rate across passenger classes**by counting how many passengers survived in each class anddividing by the total passengers in that class. ThenI\u2019ll rank the classes so we can clearly see which one had thebest outcomes.The sandbox is a bit stricter than standard Pythonabout nested assignments, so I\u2019ll rewrite the grouping logic ina simpler step-by-step way and rerun it. Once that works, we\u2019ll have a clean table of survival ratesby class.## Survival Rates by Passenger Cla",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 101
+        },
+        {
+          "mode": "pydantic_ai",
+          "success": true,
+          "wall_time_s": 11.45,
+          "server_time_ms": 11394,
+          "turns": 4,
+          "tool_calls": 3,
+          "artifact_count": 3,
+          "code_block_count": 71,
+          "text_length": 1076,
+          "text_preview": "I\u2019ll compute survival rates for each passengerclass by grouping the Titanic records in Pythonand calculating the share who survived within each class. Then I\u2019ll identify which class comes out on top and summarizethe pattern.The sandbox is a bit stricter than standard Pythonabout nested indexing in assignment,so I\u2019ll rewrite that part more explicitly. The logic stays the same: count passengers andsurvivors in each class, thencompute the percentage survivalrate.Here are the class-level survival ra",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 129
+        },
+        {
+          "mode": "pydantic_ai",
+          "success": true,
+          "wall_time_s": 10.48,
+          "server_time_ms": 10317,
+          "turns": 3,
+          "tool_calls": 2,
+          "artifact_count": 2,
+          "code_block_count": 49,
+          "text_length": 1088,
+          "text_preview": "I\u2019ll compare **survivalrates across the three passenger classes** by counting how many passengers were in each class and howmany survived. Then I\u2019ll compute thepercentage survival rate for each class and identify the highestone.The sandbox is a bit stricter thanstandard Python about nested assignments,so I\u2019ll rewritethe aggregation in a simpler step-by-step way. After that, I\u2019ll read off the class withthe strongestsurvival rate.Here\u2019s the comparison by class. The pattern is very clear: **surviva",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 114
+        }
+      ],
+      "parallel": [
+        {
+          "mode": "parallel",
+          "success": true,
+          "wall_time_s": 11.96,
+          "server_time_ms": 11892,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 29,
+          "text_length": 837,
+          "text_preview": "I apologize, but I encountered a technicalerror while analyzing the Titanic survivaldata by passenger class. The calculationfailed due to a syntax error in the dataprocessing code.To properly answer yourquestion about which passenger class hadthe highest survival rate, I would needto:1. **Group passengers by class** (1st,2nd, and 3rd class)2. **Calculate survivalrates** for each class (survivors \u00f7 totalpassengers)3. **Compare the rates** toidentify the highestUnfortunately, thecurrent analysis c",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Executing 1 sub-tasks in 1 batches...",
+            "Task 'calculate_survival_by_class' failed: Syntax error: Expected name, got Subscript(ExprSubscript { node_index: NodeIndex(None), range: 256..284, value: Subscript(ExprSubscript { node_index: NodeIndex(None), range: 256..275, value: Name(ExprName { node_index: NodeIndex(None), range: 256..267, id: Name(\"class_stats\"), ctx: Load }), slice: Name(ExprName { node_index: NodeIndex(None), range: 268..274, id: Name(\"pclass\"), ctx: Load }), ctx: Load }), slice: StringLiteral(ExprStringLiteral { node_index: NodeIndex(None), range: 276..283, value: StringLiteralValue { inner: Single(StringLiteral { range: 276..283, node_index: NodeIndex(None), value: \"total\", flags: StringLiteralFlags { quote_style: Single, prefix: Empty, triple_quoted: false, unclosed: false } }) } }), ctx: Store })",
+            "Synthesizing results..."
+          ],
+          "plan": [
+            {
+              "task_id": "calculate_survival_by_class",
+              "description": "Calculate the survival rate for each passenger class (pclass) in the titanic dataset. Group by pclass and compute: total passengers per class, number of survivors (survived=1), and survival rate (survivors/total). Sort by pclass ascending. Include all three classes (1, 2, 3).",
+              "datasets": [
+                "titanic"
+              ],
+              "depends_on": []
+            }
+          ],
+          "event_count": 67
+        },
+        {
+          "mode": "parallel",
+          "success": true,
+          "wall_time_s": 13.04,
+          "server_time_ms": 12846,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 29,
+          "text_length": 1156,
+          "text_preview": "I apologize, but I encountered a technicalerror while analyzing the Titanic survivaldata by passenger class. The analysis faileddue to a syntax error in the data processingcode.**What I was attempting to calculate:**-Survival rates for each passenger class(1st, 2nd, and 3rd class)- Total passengersand survivors in each class- Percentagesurvival rates to determine which classhad the highest survival rate**To answeryour question properly, I would need to:**1.Successfully group passengers by their ",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Executing 1 sub-tasks in 1 batches...",
+            "Task 'calculate_survival_by_class' failed: Syntax error: Expected name, got Subscript(ExprSubscript { node_index: NodeIndex(None), range: 253..280, value: Subscript(ExprSubscript { node_index: NodeIndex(None), range: 253..271, value: Name(ExprName { node_index: NodeIndex(None), range: 253..263, id: Name(\"class_data\"), ctx: Load }), slice: Name(ExprName { node_index: NodeIndex(None), range: 264..270, id: Name(\"pclass\"), ctx: Load }), ctx: Load }), slice: StringLiteral(ExprStringLiteral { node_index: NodeIndex(None), range: 272..279, value: StringLiteralValue { inner: Single(StringLiteral { range: 272..279, node_index: NodeIndex(None), value: \"total\", flags: StringLiteralFlags { quote_style: Single, prefix: Empty, triple_quoted: false, unclosed: false } }) } }), ctx: Store })",
+            "Synthesizing results..."
+          ],
+          "plan": [
+            {
+              "task_id": "calculate_survival_by_class",
+              "description": "Calculate the survival rate for each passenger class (pclass) in the titanic dataset. Group by pclass and compute the percentage of passengers who survived (survived=1) for each class. Return results showing pclass, total passengers, survivors, and survival rate as a percentage.",
+              "datasets": [
+                "titanic"
+              ],
+              "depends_on": []
+            }
+          ],
+          "event_count": 84
+        },
+        {
+          "mode": "parallel",
+          "success": true,
+          "wall_time_s": 11.65,
+          "server_time_ms": 11572,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 29,
+          "text_length": 933,
+          "text_preview": "I apologize, but I encountered a technicalerror while attempting to calculate thesurvival rates by passenger class. The analysiscouldn't be completed due to a syntax issuein the code execution.To properly answeryour question about which passenger classhad the highest survival rate on the Titanic,I would need to:1. **Group passengersby their class** (1st, 2nd, and 3rd class)2.**Calculate the survival rate** for eachclass (percentage of survivors vs. totalpassengers)3. **Compare the rates** across",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Executing 1 sub-tasks in 1 batches...",
+            "Task 'calculate_survival_by_class' failed: Syntax error: Expected name, got Subscript(ExprSubscript { node_index: NodeIndex(None), range: 256..284, value: Subscript(ExprSubscript { node_index: NodeIndex(None), range: 256..275, value: Name(ExprName { node_index: NodeIndex(None), range: 256..267, id: Name(\"class_stats\"), ctx: Load }), slice: Name(ExprName { node_index: NodeIndex(None), range: 268..274, id: Name(\"pclass\"), ctx: Load }), ctx: Load }), slice: StringLiteral(ExprStringLiteral { node_index: NodeIndex(None), range: 276..283, value: StringLiteralValue { inner: Single(StringLiteral { range: 276..283, node_index: NodeIndex(None), value: \"total\", flags: StringLiteralFlags { quote_style: Single, prefix: Empty, triple_quoted: false, unclosed: false } }) } }), ctx: Store })",
+            "Synthesizing results..."
+          ],
+          "plan": [
+            {
+              "task_id": "calculate_survival_by_class",
+              "description": "Calculate the survival rate for each passenger class (pclass) in the titanic dataset. Group by pclass and compute the percentage of passengers who survived (survived=1) for each class. Return the results showing pclass, total passengers, survivors, and survival rate percentage, ordered by pclass.",
+              "datasets": [
+                "titanic"
+              ],
+              "depends_on": []
+            }
+          ],
+          "event_count": 68
+        }
+      ],
+      "pydantic_graph_mode": [
+        {
+          "mode": "pydantic_graph_mode",
+          "success": true,
+          "wall_time_s": 14.89,
+          "server_time_ms": 14831,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 29,
+          "text_length": 1379,
+          "text_preview": "# Analysis Status: Unable to CompleteUnfortunately,I was **unable to calculate the survivalrates by passenger class** due to a technicalerror in the data analysis process. Thesystem encountered a syntax error when attemptingto process the Titanic passenger data.##What Was AttemptedThe analysis tried to:-Group passengers by their class (1st, 2nd,and 3rd class)- Calculate survival ratesfor each class- Compare these rates toidentify which class had the highest survivalrate## What You Can DoTo get a",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Decomposing question into subtasks...",
+            "Plan: 1 subtask to execute",
+            "Executing: Calculate the survival rate for each passenger class (pclass...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 93
+        },
+        {
+          "mode": "pydantic_graph_mode",
+          "success": true,
+          "wall_time_s": 11.87,
+          "server_time_ms": 11817,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 29,
+          "text_length": 1019,
+          "text_preview": "I apologize, but I was unable to completethe analysis due to a technical error inprocessing the data. The system encountereda syntax error while attempting to calculatesurvival rates by passenger class.To properlyanswer your question about which passengerclass had the highest survival rate on theTitanic, I would need to:1. **Group passengersby class** (1st, 2nd, and 3rd class)2.**Calculate survival rates** for each class(survivors \u00f7 total passengers)3. **Comparethe rates** to identify the class ",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Decomposing question into subtasks...",
+            "Plan: 1 subtask to execute",
+            "Executing: Calculate the survival rate for each passenger class (pclass...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 77
+        },
+        {
+          "mode": "pydantic_graph_mode",
+          "success": true,
+          "wall_time_s": 14.1,
+          "server_time_ms": 14061,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 32,
+          "text_length": 1190,
+          "text_preview": "# Analysis ResultUnfortunately, I wasunable to complete the survival rate analysisdue to a technical error in the data processingcode. The system encountered a syntax errorwhile attempting to calculate survival statisticsby passenger class.## What Went WrongTheanalysis failed during the computation stepthat was designed to:- Group passengersby their ticket class (1st, 2nd, and 3rdclass)- Calculate survival rates for eachclass- Compare these rates to determinewhich class had the best survival out",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Decomposing question into subtasks...",
+            "Plan: 1 subtask to execute",
+            "Executing: Calculate the survival rate for each passenger class (pclass...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 90
+        }
+      ],
+      "graph_state": [
+        {
+          "mode": "graph_state",
+          "success": true,
+          "wall_time_s": 11.58,
+          "server_time_ms": 11542,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 29,
+          "text_length": 907,
+          "text_preview": "# Survival Rates by Passenger Class - AnalysisErrorUnfortunately, I was unable to completethe analysis of survival rates by passengerclass due to a technical error in the dataprocessing step. The analysis encountereda syntax error when attempting to calculatethe survival statistics for each class.##What Was AttemptedThe analysis tried to:-Group Titanic passengers by their ticketclass (1st, 2nd, and 3rd class)- Calculatesurvival rates for each class- Comparethe rates to determine which class had ",
+          "errors": [],
+          "status_messages": [
+            "Starting plan-execute-synthesize pipeline...",
+            "Planning analysis...",
+            "Executing 1 subtasks in 1 batches...",
+            "Running batch 1/1...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 76
+        },
+        {
+          "mode": "graph_state",
+          "success": true,
+          "wall_time_s": 12.88,
+          "server_time_ms": 12757,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 28,
+          "text_length": 1149,
+          "text_preview": "# Survival Rates by Passenger Class - AnalysisErrorUnfortunately, I encountered a **technicalerror** while attempting to analyze theTitanic survival data by passenger class.The analysis task failed due to a syntaxerror in the data processing code.## WhatWent WrongThe error occurred when tryingto calculate survival statistics groupedby passenger class. Specifically, therewas an issue with how the data structurewas being accessed - the code attemptedan invalid operation when trying to extractsurvi",
+          "errors": [],
+          "status_messages": [
+            "Starting plan-execute-synthesize pipeline...",
+            "Planning analysis...",
+            "Executing 1 subtasks in 1 batches...",
+            "Running batch 1/1...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 86
+        },
+        {
+          "mode": "graph_state",
+          "success": true,
+          "wall_time_s": 13.86,
+          "server_time_ms": 13786,
+          "turns": 3,
+          "tool_calls": 1,
+          "artifact_count": 1,
+          "code_block_count": 29,
+          "text_length": 1287,
+          "text_preview": "# Titanic Survival Analysis - TechnicalErrorUnfortunately, I was unable to completethe analysis of survival rates by passengerclass due to a **technical error in thedata processing code**.## What HappenedThesystem encountered a syntax error whileattempting to calculate the survival statisticsfor each passenger class. This preventedme from generating the comparison data neededto answer your question.## What We KnowTheTitanic dataset typically contains passengerclass information (1st, 2nd, and 3rd",
+          "errors": [],
+          "status_messages": [
+            "Starting plan-execute-synthesize pipeline...",
+            "Planning analysis...",
+            "Executing 1 subtasks in 1 batches...",
+            "Running batch 1/1...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 92
+        }
+      ]
+    }
+  },
+  "complex": {
+    "question": "For the Titanic dataset, compute the average age and survival rate by class, then identify which class had the best combination of younger average age and higher survival rate.",
+    "expected_type": "multi_step",
+    "runs": {
+      "standard": [
+        {
+          "mode": "standard",
+          "success": true,
+          "wall_time_s": 46.11,
+          "server_time_ms": 46020,
+          "turns": 11,
+          "tool_calls": 5,
+          "artifact_count": 5,
+          "code_block_count": 195,
+          "text_length": 2559,
+          "text_preview": "I'll analyze the Titanic dataset to find which passenger class had the best combination of younger average age and higher survival rate. Let me start by computing the key metrics for each class.**My approach:** First, I'll fetch the Titanic data and group it by passenger class (pclass). For each class, I'll calculate the average age and survival rate. Then I'll identify which class offers the best combination of being younger and having better survival odds.Let me start by computing the statisti",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Running code in sandbox...",
+            "Running code in sandbox...",
+            "Running code in sandbox...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 264
+        },
+        {
+          "mode": "standard",
+          "success": true,
+          "wall_time_s": 66.39,
+          "server_time_ms": 66310,
+          "turns": 14,
+          "tool_calls": 8,
+          "artifact_count": 8,
+          "code_block_count": 371,
+          "text_length": 1999,
+          "text_preview": "I'll analyze the Titanic dataset to find the average age and survival rate by passenger class, then determine which class had the best combination of younger age and higher survival rate.Let me start by computing the key metrics for each passenger class:Let me fix that syntax issue - I need to initialize the dictionary properly:I see the issue - the sandbox doesn't support augmented assignment with dictionary subscripts. Let me rewrite it:Excellent! Now I can see the breakdown by class. Let me a",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Running code in sandbox...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Running code in sandbox...",
+            "Running code in sandbox...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 430
+        },
+        {
+          "mode": "standard",
+          "success": true,
+          "wall_time_s": 23.98,
+          "server_time_ms": 23919,
+          "turns": 5,
+          "tool_calls": 2,
+          "artifact_count": 2,
+          "code_block_count": 98,
+          "text_length": 1665,
+          "text_preview": "I'll analyze the Titanic dataset to find the average age and survival rate by passenger class, then identify which class had the best combination of younger age and higher survival.Let me start by fetching the data and computing these statistics for each class.Let me fix the syntax - I need to use a different approach for initializing the nested dictionary:Perfect! Now let me analyze these results to identify which class had the best combination of younger average age and higher survival rate.Lo",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Running code in sandbox...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 135
+        }
+      ],
+      "codemode": [
+        {
+          "mode": "codemode",
+          "success": true,
+          "wall_time_s": 75.5,
+          "server_time_ms": 75457,
+          "turns": 13,
+          "tool_calls": 12,
+          "artifact_count": 8,
+          "code_block_count": 394,
+          "text_length": 1856,
+          "text_preview": "I'll help you analyze the Titanic dataset to find the average age and survival rate by class, then identify which class had the best combination of younger age and higher survival rate.Let me start by exploring what's available:Perfect! Now let me fetch the Titanic data and calculate the average age andsurvival rate by class:Letme fix the syntax - I need to use separate statements for incrementing:I see- the issue is with dictionary assignment in the loop. Let me restructure the code:Great! Nowl",
+          "errors": [],
+          "status_messages": [
+            "Starting Code Mode...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking..."
+          ],
+          "plan": [],
+          "event_count": 482
+        },
+        {
+          "mode": "codemode",
+          "success": true,
+          "wall_time_s": 147.47,
+          "server_time_ms": 147443,
+          "turns": 12,
+          "tool_calls": 11,
+          "artifact_count": 7,
+          "code_block_count": 274,
+          "text_length": 1999,
+          "text_preview": "I'll help you analyze the Titanic dataset to find the average age and survival rate by class, then identify which class had the best combination of younger age and higher survival rate.Let me start by exploring what's available:Perfect! Now I can fetch the Titanic data and analyze it. Let me get the data andcompute the average age and survival rate by class:Letme fix the syntax error - I need to use a different approach for incrementing:Isee - I can't use subscript assignment on the leftside. Le",
+          "errors": [],
+          "status_messages": [
+            "Starting Code Mode...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking..."
+          ],
+          "plan": [],
+          "event_count": 372
+        },
+        {
+          "mode": "codemode",
+          "success": true,
+          "wall_time_s": 38.07,
+          "server_time_ms": 37972,
+          "turns": 8,
+          "tool_calls": 7,
+          "artifact_count": 4,
+          "code_block_count": 122,
+          "text_length": 1594,
+          "text_preview": "I'll help you analyze the Titanic dataset to find average age and survival rate by class, then determine which class had the best combination of younger age and higher survival rate.Let me start by exploring what'savailable:Perfect! Now let me fetch the Titanic data and compute the statistics by class:Letme fix the syntax - I need to use a different approach:Excellent! Now let me identifywhich class had the best combination of younger age and higher survival rate:##SummaryBased on my analysis of",
+          "errors": [],
+          "status_messages": [
+            "Starting Code Mode...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Thinking..."
+          ],
+          "plan": [],
+          "event_count": 192
+        }
+      ],
+      "pydantic_ai": [
+        {
+          "mode": "pydantic_ai",
+          "success": true,
+          "wall_time_s": 21.67,
+          "server_time_ms": 21539,
+          "turns": 4,
+          "tool_calls": 3,
+          "artifact_count": 3,
+          "code_block_count": 124,
+          "text_length": 2042,
+          "text_preview": "## PlanI\u2019ll first compute **average age** and **survival rate** for each passengerclass so we can compare them side by side. Then I\u2019ll interpret which class appears to have the**best mix of being youngeron average and surviving more often**, ratherthan looking at either metric inisolation.The sandbox is a bit stricter than normal Python about incrementing nested dictionary values directly. I\u2019ll rewrite thegrouping logic in a more step-by-step way so it executes cleanly, then we can interpret the",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 232
+        },
+        {
+          "mode": "pydantic_ai",
+          "success": true,
+          "wall_time_s": 23.36,
+          "server_time_ms": 23285,
+          "turns": 4,
+          "tool_calls": 3,
+          "artifact_count": 3,
+          "code_block_count": 104,
+          "text_length": 2291,
+          "text_preview": "## PlanI\u2019ll first compute a compactsummary **by passenger class**with two metrics: **average age** and **survival rate**. ThenI\u2019ll compare the classes toidentify which one offers the strongest mix of **younger passengers** and **bettersurvival outcomes**, and I\u2019ll explain the tradeoffclearly.The sandbox is a bit stricter thanstandard Python about updating nested dictionary values directly. I\u2019ll rewrite the groupinglogic in a moreexplicit style, which should work cleanlyand still give us the same",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 223
+        },
+        {
+          "mode": "pydantic_ai",
+          "success": true,
+          "wall_time_s": 24.99,
+          "server_time_ms": 24942,
+          "turns": 4,
+          "tool_calls": 3,
+          "artifact_count": 3,
+          "code_block_count": 100,
+          "text_length": 3174,
+          "text_preview": "I'll first calculate **average age** and **survival rate** for each passengerclass, using Python to groupthe Titanic records by `pclass`. Then I\u2019ll compare the classesto identify which one appears to have the **best mix of younger passengers and higher survival**, and I\u2019ll explain the tradeoff rather than justnaming aclass.The sandbox is a bit stricter thanstandard Python about nestedindexing during assignment, so I\u2019ll rewrite the grouping logic in a simpler step-by-step style. Thatwill give us ",
+          "errors": [],
+          "status_messages": [
+            "Starting analysis...",
+            "Agent is thinking...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Running code in sandbox...",
+            "Code failed, agent may retry...",
+            "Analyzing results...",
+            "Executing tools...",
+            "Analyzing results..."
+          ],
+          "plan": [],
+          "event_count": 249
+        }
+      ],
+      "parallel": [
+        {
+          "mode": "parallel",
+          "success": true,
+          "wall_time_s": 29.36,
+          "server_time_ms": 29325,
+          "turns": 4,
+          "tool_calls": 2,
+          "artifact_count": 2,
+          "code_block_count": 97,
+          "text_length": 1379,
+          "text_preview": "# Analysis Results: Titanic Survival byClassBased on the analysis of the Titanicdataset, here are the key findings regardingage and survival rates across passengerclasses:## Class StatisticsThe datareveals distinct patterns across the threepassenger classes:- **1st Class**: Averageage of **38.2 years** with a **65.6% survivalrate**- **2nd Class**: Average age of **29.9years** with a **48.0% survival rate**- **3rd Class**: Average age of **25.1years** with a **23.9% survival rate**##Best Combinat",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Executing 2 sub-tasks in 2 batches...",
+            "Task 'compute_class_statistics' failed: Syntax error: Expected name, got Subscript(ExprSubscript { node_index: NodeIndex(None), range: 365..388, value: Subscript(ExprSubscript { node_index: NodeIndex(None), range: 365..379, value: Name(ExprName { node_index: NodeIndex(None), range: 365..371, id: Name(\"groups\"), ctx: Load }), slice: Name(ExprName { node_index: NodeIndex(None), range: 372..378, id: Name(\"pclass\"), ctx: Load }), ctx: Load }), slice: StringLiteral(ExprStringLiteral { node_index: NodeIndex(None), range: 380..387, value: StringLiteralValue { inner: Single(StringLiteral { range: 380..387, node_index: NodeIndex(None), value: \"total\", flags: StringLiteralFlags { quote_style: Single, prefix: Empty, triple_quoted: false, unclosed: false } }) } }), ctx: Store })",
+            "Completed: identify_best_class",
+            "Synthesizing results..."
+          ],
+          "plan": [
+            {
+              "task_id": "compute_class_statistics",
+              "description": "For the titanic dataset, calculate the average age and survival rate (proportion of passengers who survived) grouped by passenger class (pclass). Return a table with columns: pclass, avg_age, survival_rate. Handle null ages appropriately when computing averages.",
+              "datasets": [
+                "titanic"
+              ],
+              "depends_on": []
+            },
+            {
+              "task_id": "identify_best_class",
+              "description": "Using the class statistics with columns pclass, avg_age, and survival_rate, identify which class has the best combination of younger average age (lower is better) and higher survival rate (higher is better). Consider a class 'best' if it has below-average age AND above-average survival rate, or use a composite score if needed. Return the pclass along with reasoning.",
+              "datasets": [
+                "titanic"
+              ],
+              "depends_on": [
+                "compute_class_statistics"
+              ]
+            }
+          ],
+          "event_count": 162
+        },
+        {
+          "mode": "parallel",
+          "success": true,
+          "wall_time_s": 32.64,
+          "server_time_ms": 32551,
+          "turns": 4,
+          "tool_calls": 2,
+          "artifact_count": 2,
+          "code_block_count": 84,
+          "text_length": 1606,
+          "text_preview": "# Titanic Class Analysis: Age and SurvivalPatternsBased on the statistical analysisof the Titanic dataset, here are the keyfindings regarding age and survival ratesacross passenger classes:## Class Statistics**FirstClass (pclass 1):**- Average age: **38.23years** (oldest)- Survival rate: **65.59%**(highest)**Second Class (pclass 2):**-Average age: **29.88 years** (middle)-Survival rate: **47.98%** (middle)**ThirdClass (pclass 3):**- Average age: **25.14years** (youngest)- Survival rate: **23.94%",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Executing 2 sub-tasks in 2 batches...",
+            "Completed: compute_class_statistics",
+            "Task 'identify_best_class' failed: Runtime error: TypeError: max() does not support keyword arguments yet",
+            "Synthesizing results..."
+          ],
+          "plan": [
+            {
+              "task_id": "compute_class_statistics",
+              "description": "Calculate the average age and survival rate for each passenger class (pclass) in the Titanic dataset. Group by pclass and compute: 1) AVG(age) as average_age, 2) AVG(survived) as survival_rate. Handle NULL ages appropriately. Return results with columns: pclass, average_age, survival_rate.",
+              "datasets": [
+                "titanic"
+              ],
+              "depends_on": []
+            },
+            {
+              "task_id": "identify_best_class",
+              "description": "From the class statistics (pclass, average_age, survival_rate), identify which class has the best combination of younger average age and higher survival rate. Consider a class 'best' if it has both below-median average_age AND above-median survival_rate, or use a combined score approach. Return the pclass that represents the optimal combination with explanation of why it was selected.",
+              "datasets": [
+                "titanic"
+              ],
+              "depends_on": [
+                "compute_class_statistics"
+              ]
+            }
+          ],
+          "event_count": 165
+        },
+        {
+          "mode": "parallel",
+          "success": true,
+          "wall_time_s": 26.85,
+          "server_time_ms": 26801,
+          "turns": 4,
+          "tool_calls": 2,
+          "artifact_count": 2,
+          "code_block_count": 98,
+          "text_length": 1265,
+          "text_preview": "# Analysis Error SummaryUnfortunately,I was unable to complete your analysis dueto **syntax errors** in both sub-tasks.The errors suggest issues with how the codeattempted to access and assign DataFramevalues using subscript notation.## WhatWent WrongBoth analysis steps failed withPython syntax errors:1. **compute_class_statistics**:The error occurred when trying to assignvalues using nested subscript notation (e.g.,`grouped[pclass]['total_count']`). Thissuggests the code attempted to use dictio",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Executing 2 sub-tasks in 2 batches...",
+            "Task 'compute_class_statistics' failed: Syntax error: Expected name, got Subscript(ExprSubscript { node_index: NodeIndex(None), range: 325..355, value: Subscript(ExprSubscript { node_index: NodeIndex(None), range: 325..340, value: Name(ExprName { node_index: NodeIndex(None), range: 325..332, id: Name(\"grouped\"), ctx: Load }), slice: Name(ExprName { node_index: NodeIndex(None), range: 333..339, id: Name(\"pclass\"), ctx: Load }), ctx: Load }), slice: StringLiteral(ExprStringLiteral { node_index: NodeIndex(None), range: 341..354, value: StringLiteralValue { inner: Single(StringLiteral { range: 341..354, node_index: NodeIndex(None), value: \"total_count\", flags: StringLiteralFlags { quote_style: Single, prefix: Empty, triple_quoted: false, unclosed: false } }) } }), ctx: Store })",
+            "Task 'identify_best_class' failed: Syntax error: Expected name, got Subscript(ExprSubscript { node_index: NodeIndex(None), range: 303..331, value: Subscript(ExprSubscript { node_index: NodeIndex(None), range: 303..322, value: Name(ExprName { node_index: NodeIndex(None), range: 303..314, id: Name(\"class_stats\"), ctx: Load }), slice: Name(ExprName { node_index: NodeIndex(None), range: 315..321, id: Name(\"pclass\"), ctx: Load }), ctx: Load }), slice: StringLiteral(ExprStringLiteral { node_index: NodeIndex(None), range: 323..330, value: StringLiteralValue { inner: Single(StringLiteral { range: 323..330, node_index: NodeIndex(None), value: \"total\", flags: StringLiteralFlags { quote_style: Single, prefix: Empty, triple_quoted: false, unclosed: false } }) } }), ctx: Store })",
+            "Synthesizing results..."
+          ],
+          "plan": [
+            {
+              "task_id": "compute_class_statistics",
+              "description": "For the titanic dataset, calculate the average age and survival rate (proportion of survived=1) grouped by passenger class (pclass). Return columns: pclass, avg_age, survival_rate. Handle null ages appropriately.",
+              "datasets": [
+                "titanic"
+              ],
+              "depends_on": []
+            },
+            {
+              "task_id": "identify_best_class",
+              "description": "From the class statistics (pclass, avg_age, survival_rate), identify which class has the best combination of younger average age and higher survival rate. Consider a class 'best' if it has below-median average age AND above-median survival rate, or use a combined scoring method if no class meets both criteria. Return the pclass with explanation of why it's best.",
+              "datasets": [
+                "titanic"
+              ],
+              "depends_on": [
+                "compute_class_statistics"
+              ]
+            }
+          ],
+          "event_count": 164
+        }
+      ],
+      "pydantic_graph_mode": [
+        {
+          "mode": "pydantic_graph_mode",
+          "success": true,
+          "wall_time_s": 27.2,
+          "server_time_ms": 27119,
+          "turns": 4,
+          "tool_calls": 2,
+          "artifact_count": 2,
+          "code_block_count": 100,
+          "text_length": 1468,
+          "text_preview": "# Analysis Summary: Titanic Survival byClassBased on the class statistics analysis,here are the key findings:## Class ComparisonThedata reveals a clear inverse relationshipbetween passenger class and both age andsurvival:| Class | Average Age | SurvivalRate ||-------|-------------|---------------||1st   | 38.23 years | **65.59%** || 2nd| 29.88 years | 47.98% || 3rd   | 25.14years | 23.94% |## Key Findings**FirstClass** passengers had the **highest survivalrate at 65.59%**, meaning nearly two-thi",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Decomposing question into subtasks...",
+            "Plan: 2 subtasks to execute",
+            "Executing: Calculate the average age and survival rate for each passeng...",
+            "Executing: From the class statistics (pclass, avg_age, survival_rate), ...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 175
+        },
+        {
+          "mode": "pydantic_graph_mode",
+          "success": true,
+          "wall_time_s": 28.47,
+          "server_time_ms": 28364,
+          "turns": 4,
+          "tool_calls": 2,
+          "artifact_count": 2,
+          "code_block_count": 97,
+          "text_length": 1633,
+          "text_preview": "# Analysis Summary: Titanic Survival byClass## Key FindingsDespite a technicalerror in one sub-task, the analysis successfullyidentified passenger statistics across allthree classes. Here's what the data reveals:###Class Statistics**First Class (Class 1):**-Average age: **38.23 years** (oldest)-Survival rate: **65.59%** (highest survival)-Total passengers: 186**Second Class (Class2):**- Average age: **29.88 years** (middle)-Survival rate: **47.98%** (middle survival)-Total passengers: 173**Third",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Decomposing question into subtasks...",
+            "Plan: 2 subtasks to execute",
+            "Executing: Calculate the average age and survival rate (proportion of s...",
+            "Executing: From the class statistics (pclass, avg_age, survival_rate), ...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 182
+        },
+        {
+          "mode": "pydantic_graph_mode",
+          "success": true,
+          "wall_time_s": 30.85,
+          "server_time_ms": 30792,
+          "turns": 4,
+          "tool_calls": 2,
+          "artifact_count": 2,
+          "code_block_count": 107,
+          "text_length": 1725,
+          "text_preview": "# Analysis Summary: Titanic Survival andAge by Class## Key FindingsThe datareveals a **stark class divide** on theTitanic, with clear patterns in both agedemographics and survival outcomes:###Class-by-Class Breakdown**First Class**passengers had the highest survival rateat **65.6%**, but were also the oldest demographicwith an average age of **38.2 years**. Thisrepresents the wealthiest passengers whohad priority access to lifeboats.**SecondClass** passengers were middle-aged (average**29.9 year",
+          "errors": [],
+          "status_messages": [
+            "Planning analysis...",
+            "Decomposing question into subtasks...",
+            "Plan: 2 subtasks to execute",
+            "Executing: Calculate the average age and survival rate (percentage of p...",
+            "Executing: Using the results from compute_stats_by_class (which contain...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 183
+        }
+      ],
+      "graph_state": [
+        {
+          "mode": "graph_state",
+          "success": true,
+          "wall_time_s": 27.24,
+          "server_time_ms": 27169,
+          "turns": 4,
+          "tool_calls": 2,
+          "artifact_count": 2,
+          "code_block_count": 93,
+          "text_length": 1444,
+          "text_preview": "# Titanic Class Analysis: Age and SurvivalBasedon the analysis of the Titanic dataset,**Class 2 (Second Class) had the best combinationof younger average age and higher survivalrate**.## Key Findings**Class 2 passengersdemonstrated:**- **Average age: 29.88 years**-**Survival rate: 47.98%**This second-classdesignation achieved the optimal balancewhen considering both factors together.While first-class passengers likely hada higher survival rate, and third-classpassengers were probably younger on ",
+          "errors": [],
+          "status_messages": [
+            "Starting plan-execute-synthesize pipeline...",
+            "Planning analysis...",
+            "Executing 2 subtasks in 2 batches...",
+            "Running batch 1/2...",
+            "Running batch 2/2...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 155
+        },
+        {
+          "mode": "graph_state",
+          "success": true,
+          "wall_time_s": 21.77,
+          "server_time_ms": 21721,
+          "turns": 4,
+          "tool_calls": 2,
+          "artifact_count": 2,
+          "code_block_count": 56,
+          "text_length": 1421,
+          "text_preview": "# Analysis: Age and Survival Patterns AcrossTitanic Passenger ClassesBased on thecomputed statistics, here's what the datareveals about the relationship between passengerclass, age, and survival:## Key Findings**FirstClass (pclass 1):**- Average age: **38.23years** (oldest)- Survival rate: **65.59%**(highest)**Second Class (pclass 2):**-Average age: **29.88 years** (middle)-Survival rate: **47.98%** (middle)**ThirdClass (pclass 3):**- Average age: **25.14years** (youngest)- Survival rate: **23.9",
+          "errors": [],
+          "status_messages": [
+            "Starting plan-execute-synthesize pipeline...",
+            "Planning analysis...",
+            "Executing 2 subtasks in 2 batches...",
+            "Running batch 1/2...",
+            "Running batch 2/2...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 128
+        },
+        {
+          "mode": "graph_state",
+          "success": true,
+          "wall_time_s": 27.17,
+          "server_time_ms": 27132,
+          "turns": 4,
+          "tool_calls": 2,
+          "artifact_count": 2,
+          "code_block_count": 79,
+          "text_length": 1552,
+          "text_preview": "# Analysis: Titanic Survival and Age byClassBased on the statistical analysisof the Titanic dataset, here are the keyfindings:## Class-by-Class Breakdown**FirstClass (Upper Deck)**- Average age: **38.23years**- Survival rate: **65.59%****SecondClass (Middle Deck)**- Average age: **29.88years**- Survival rate: **47.98%****ThirdClass (Lower Deck)**- Average age: **25.14years**- Survival rate: **23.94%**##Key InsightsThe data reveals a **starkinverse relationship** between passengerclass and surviv",
+          "errors": [],
+          "status_messages": [
+            "Starting plan-execute-synthesize pipeline...",
+            "Planning analysis...",
+            "Executing 2 subtasks in 2 batches...",
+            "Running batch 1/2...",
+            "Running batch 2/2...",
+            "Synthesizing results..."
+          ],
+          "plan": [],
+          "event_count": 161
+        }
+      ]
+    }
+  }
+}
