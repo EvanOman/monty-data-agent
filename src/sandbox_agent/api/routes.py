@@ -54,7 +54,7 @@ async def chat_endpoint(req: ChatRequest, request: Request):
         client = agent_client
 
     async def event_generator():
-        yield sse_init({"conversation_id": conversation_id})
+        yield sse_init({"conversation_id": conversation_id, "thread_id": conversation_id})
 
         full_text_parts = []
         try:
