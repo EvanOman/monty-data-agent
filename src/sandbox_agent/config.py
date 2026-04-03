@@ -4,6 +4,11 @@ from pathlib import Path
 PROJECT_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = PROJECT_DIR / "data"
 STATIC_DIR = PROJECT_DIR / "static"
+
+# Chatkit sibling repo paths (for serving web component assets during development)
+CHATKIT_DIR = PROJECT_DIR.parent / "chatkit"
+CHATKIT_DIST_DIR = CHATKIT_DIR / "dist"
+CHATKIT_SRC_DIR = CHATKIT_DIR / "src"
 SQLITE_PATH = DATA_DIR / "store.db"
 
 PORT = int(os.environ.get("PORT", "19876"))

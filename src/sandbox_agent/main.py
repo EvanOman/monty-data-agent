@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from .agent.client import AgentClient
 from .api.routes import router
 from .codemode.client import CodeModeClient
-from .config import DATA_DIR, ROOT_PATH, SQLITE_PATH, STATIC_DIR
+from .config import CHATKIT_DIST_DIR, CHATKIT_SRC_DIR, DATA_DIR, ROOT_PATH, SQLITE_PATH, STATIC_DIR
 from .engine.duckdb_store import DuckDBStore
 from .engine.sqlite_store import SQLiteStore
 from .graph_state.client import GraphStateClient
@@ -92,4 +92,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Data Analysis Agent", root_path=ROOT_PATH, lifespan=lifespan)
 app.include_router(router)
+
+# Mount chatkit assets from the sibling repo so the frontend can import them.
+# In production these would come from a proper package/CDN instead.
+app.mount("/chatkit/dist", StaticFiles(directory=str(CHATKIT_DIST_DIR)), name="chatkit-dist")
+app.mount("/chatkit/src", StaticFiles(directory=str(CHATKIT_SRC_DIR)), name="chatkit-src")
+
 app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
