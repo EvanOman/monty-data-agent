@@ -97,6 +97,13 @@ async def list_conversations(request: Request):
     return await sqlite.list_conversations()
 
 
+@router.delete("/api/conversations/{conversation_id}")
+async def delete_conversation(conversation_id: str, request: Request):
+    sqlite = request.app.state.sqlite_store
+    await sqlite.delete_conversation(conversation_id)
+    return {"status": "deleted"}
+
+
 @router.get("/api/conversations/{conversation_id}")
 async def get_conversation(conversation_id: str, request: Request):
     sqlite = request.app.state.sqlite_store

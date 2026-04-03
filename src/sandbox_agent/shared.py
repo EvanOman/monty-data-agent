@@ -5,8 +5,10 @@ import json
 import logging
 import time
 from collections.abc import Callable, Coroutine
-from dataclasses import dataclass
 from typing import Any
+
+from chatkit import ChatEvent as ChatEvent
+from chatkit import ChatEventType as ChatEventType
 
 from .engine.executor import ExecutionResult, execute_code
 from .engine.functions import ExternalFunctions
@@ -14,14 +16,6 @@ from .engine.functions import ExternalFunctions
 logger = logging.getLogger(__name__)
 
 MAX_LOAD_ROWS = 100
-
-
-@dataclass
-class ChatEvent:
-    """An event yielded during chat streaming."""
-
-    type: str  # "text", "code", "result", "artifact", "status", "error", "done"
-    data: str = ""
 
 
 # Type alias for the optional async event callback
