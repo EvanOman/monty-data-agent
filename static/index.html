@@ -27,6 +27,12 @@
       background: var(--ck-bg);
       color: var(--ck-text);
     }
+    /* Ensure ck-app fills the viewport before shadow DOM attaches */
+    ck-app {
+      display: flex;
+      height: 100%;
+      width: 100%;
+    }
 
     /* Mode selector pill — sits beside the input */
     .mode-select {
