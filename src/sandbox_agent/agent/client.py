@@ -55,6 +55,16 @@ class AgentClient:
             )
             self._pending_artifacts.append(artifact)
             self._tool_timings.append(timing)
+            # Emit artifact immediately so it appears inline, not after summary
+            if self._event_queue:
+                artifact_data = json.dumps({
+                    "id": artifact["id"],
+                    "code": artifact["code"],
+                    "result_json": artifact.get("result_json"),
+                    "result_type": artifact.get("result_type"),
+                    "error": artifact.get("error"),
+                })
+                await self._event_queue.put(("artifact", artifact_data))
             return {"content": [{"type": "text", "text": summary}]}
 
         @tool(
@@ -198,21 +208,12 @@ class AgentClient:
                 yield ChatEvent(type="status", data=event_data)
             elif event_type == "code":
                 yield ChatEvent(type="code", data=event_data)
+            elif event_type == "artifact":
+                yield ChatEvent(type="artifact", data=event_data)
             elif event_type == "error":
                 yield ChatEvent(type="error", data=event_data)
 
         await agent_task
-
-        # After streaming is done, emit artifact events
-        for artifact in self._pending_artifacts:
-            artifact_data = {
-                "id": artifact["id"],
-                "code": artifact["code"],
-                "result_json": artifact.get("result_json"),
-                "result_type": artifact.get("result_type"),
-                "error": artifact.get("error"),
-            }
-            yield ChatEvent(type="artifact", data=json.dumps(artifact_data))
 
         t_chat_end = time.time()
         total_ms = round((t_chat_end - t_chat_start) * 1000)

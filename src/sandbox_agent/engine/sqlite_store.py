@@ -117,6 +117,14 @@ class SQLiteStore:
         )
         await db.commit()
 
+    async def delete_conversation(self, conversation_id: str) -> None:
+        """Delete a conversation and all its messages and artifacts."""
+        db = await self._get_db()
+        await db.execute("DELETE FROM artifacts WHERE conversation_id = ?", (conversation_id,))
+        await db.execute("DELETE FROM messages WHERE conversation_id = ?", (conversation_id,))
+        await db.execute("DELETE FROM conversations WHERE id = ?", (conversation_id,))
+        await db.commit()
+
     async def touch_conversation(self, conversation_id: str) -> None:
         db = await self._get_db()
         await db.execute(

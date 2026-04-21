@@ -54,7 +54,7 @@ async def chat_endpoint(req: ChatRequest, request: Request):
         client = agent_client
 
     async def event_generator():
-        yield sse_init({"conversation_id": conversation_id})
+        yield sse_init({"conversation_id": conversation_id, "thread_id": conversation_id})
 
         full_text_parts = []
         try:
@@ -95,6 +95,13 @@ async def chat_endpoint(req: ChatRequest, request: Request):
 async def list_conversations(request: Request):
     sqlite = request.app.state.sqlite_store
     return await sqlite.list_conversations()
+
+
+@router.delete("/api/conversations/{conversation_id}")
+async def delete_conversation(conversation_id: str, request: Request):
+    sqlite = request.app.state.sqlite_store
+    await sqlite.delete_conversation(conversation_id)
+    return {"status": "deleted"}
 
 
 @router.get("/api/conversations/{conversation_id}")
