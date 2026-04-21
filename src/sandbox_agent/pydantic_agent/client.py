@@ -26,6 +26,8 @@ from ..config import PYDANTIC_AI_MODEL
 from ..engine.functions import ExternalFunctions
 from ..shared import ChatEvent, ToolExecutor
 
+DEFAULT_MODEL = PYDANTIC_AI_MODEL
+
 logger = logging.getLogger(__name__)
 
 
@@ -40,10 +42,10 @@ class AgentDeps:
     event_callback: Callable[[str, str], Coroutine[Any, Any, None]] | None = None
 
 
-def create_agent(system_prompt: str) -> Agent[AgentDeps, str]:
+def create_agent(system_prompt: str, model: str = DEFAULT_MODEL) -> Agent[AgentDeps, str]:
     """Create a Pydantic AI agent with execute_code and load_result tools."""
     agent: Agent[AgentDeps, str] = Agent(
-        PYDANTIC_AI_MODEL,
+        model,
         system_prompt=system_prompt,
         deps_type=AgentDeps,
         end_strategy="exhaustive",
@@ -89,16 +91,17 @@ def _build_message_history(history: list[dict]) -> list[ModelMessage]:
 class PydanticAIClient:
     """Pydantic AI agent client with the same interface as AgentClient."""
 
-    def __init__(self, duckdb_store, sqlite_store) -> None:
+    def __init__(self, duckdb_store, sqlite_store, model: str = DEFAULT_MODEL) -> None:
         self._duckdb = duckdb_store
         self._sqlite = sqlite_store
         self._ext_functions = ExternalFunctions(duckdb_store)
         self._tool_executor = ToolExecutor(self._ext_functions, sqlite_store)
+        self._model = model
         self._agent: Agent[AgentDeps, str] | None = None
 
     def set_schema_context(self, ctx: str) -> None:
         system_prompt = build_system_prompt(ctx)
-        self._agent = create_agent(system_prompt)
+        self._agent = create_agent(system_prompt, model=self._model)
 
     async def chat(self, conversation_id: str, user_message: str):
         """Yield ChatEvent objects as the agent processes the message.

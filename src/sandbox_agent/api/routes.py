@@ -42,6 +42,13 @@ async def chat_endpoint(req: ChatRequest, request: Request):
         client = request.app.state.codemode_client
     elif mode == "pydantic_ai":
         client = request.app.state.pydantic_ai_client
+    elif mode == "kimi":
+        client = request.app.state.kimi_client
+        if client is None:
+            raise HTTPException(
+                status_code=503,
+                detail="Kimi mode requires MOONSHOTAI_API_KEY. Set it and restart.",
+            )
     elif mode == "temporal":
         client = request.app.state.temporal_client
     elif mode == "parallel":

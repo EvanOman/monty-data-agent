@@ -1,4 +1,5 @@
 import logging
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -7,7 +8,15 @@ from fastapi.staticfiles import StaticFiles
 from .agent.client import AgentClient
 from .api.routes import router
 from .codemode.client import CodeModeClient
-from .config import CHATKIT_DIST_DIR, CHATKIT_SRC_DIR, DATA_DIR, ROOT_PATH, SQLITE_PATH, STATIC_DIR
+from .config import (
+    CHATKIT_DIST_DIR,
+    CHATKIT_SRC_DIR,
+    DATA_DIR,
+    KIMI_MODEL,
+    ROOT_PATH,
+    SQLITE_PATH,
+    STATIC_DIR,
+)
 from .engine.duckdb_store import DuckDBStore
 from .engine.sqlite_store import SQLiteStore
 from .graph_state.client import GraphStateClient
@@ -48,6 +57,17 @@ async def lifespan(app: FastAPI):
     pydantic_ai_client = PydanticAIClient(duckdb_store, sqlite_store)
     pydantic_ai_client.set_schema_context(schema_context)
 
+    kimi_client: PydanticAIClient | None = None
+    if os.environ.get("MOONSHOTAI_API_KEY"):
+        logger.info("Initializing Kimi client (model=%s)...", KIMI_MODEL)
+        kimi_client = PydanticAIClient(duckdb_store, sqlite_store, model=KIMI_MODEL)
+        kimi_client.set_schema_context(schema_context)
+    else:
+        logger.warning(
+            "MOONSHOTAI_API_KEY not set — Kimi mode will error if selected. "
+            "Set the env var to enable it."
+        )
+
     logger.info("Initializing Temporal client...")
     temporal_client = TemporalClient(sqlite_store)
     temporal_client.set_schema_context(schema_context)
@@ -69,6 +89,7 @@ async def lifespan(app: FastAPI):
     app.state.agent_client = agent_client
     app.state.codemode_client = codemode_client
     app.state.pydantic_ai_client = pydantic_ai_client
+    app.state.kimi_client = kimi_client
     app.state.temporal_client = temporal_client
     app.state.parallel_client = parallel_client
     app.state.pydantic_graph_client = pydantic_graph_client
@@ -82,6 +103,8 @@ async def lifespan(app: FastAPI):
     await agent_client.close()
     await codemode_client.close()
     await pydantic_ai_client.close()
+    if kimi_client is not None:
+        await kimi_client.close()
     await temporal_client.close()
     await parallel_client.close()
     await pydantic_graph_client.close()
