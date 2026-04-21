@@ -1,7 +1,10 @@
-"""SSE helpers — now delegating to the chatkit package.
+"""SSE helpers — thin adapters over the chatkit package.
 
-Thin wrappers that maintain backward compatibility with existing call sites
-while the migration to direct chatkit usage is in progress.
+Wraps chatkit's ChatEvent factories into the dict form that sse-starlette's
+EventSourceResponse expects. Keeps route handlers terse and centralizes the
+sandbox-agent-specific bits that aren't in the chatkit protocol (the
+``result`` event and the ``conversation_id``→``thread_id`` rename in
+``sse_init``).
 """
 
 from chatkit import ChatEvent, SSEPayload
