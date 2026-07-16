@@ -15,6 +15,7 @@ from anthropic import AsyncAnthropic
 from ..config import PARALLEL_MODEL as MODEL
 from ..engine.executor import execute_code
 from ..engine.functions import ExternalFunctions
+from ..llm_gateway import anthropic_client_kwargs
 from ..planning import SYNTHESIZE_SYSTEM_PROMPT, build_plan_prompt, build_subtask_prompt
 from ..planning.helpers import (
     chunk_text,
@@ -39,7 +40,7 @@ class ParallelClient:
     def __init__(self, duckdb_store, sqlite_store) -> None:
         self._duckdb = duckdb_store
         self._sqlite = sqlite_store
-        self._anthropic = AsyncAnthropic()
+        self._anthropic = AsyncAnthropic(**anthropic_client_kwargs())
         self._schema_context: str = ""
 
     def set_schema_context(self, ctx: str) -> None:

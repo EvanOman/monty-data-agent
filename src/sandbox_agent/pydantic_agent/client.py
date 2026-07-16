@@ -24,6 +24,7 @@ from pydantic_ai.messages import (
 from ..agent.prompts import build_system_prompt
 from ..config import PYDANTIC_AI_MODEL
 from ..engine.functions import ExternalFunctions
+from ..llm_gateway import maybe_gateway_model
 from ..shared import ChatEvent, ToolExecutor
 
 DEFAULT_MODEL = PYDANTIC_AI_MODEL
@@ -45,7 +46,7 @@ class AgentDeps:
 def create_agent(system_prompt: str, model: str = DEFAULT_MODEL) -> Agent[AgentDeps, str]:
     """Create a Pydantic AI agent with execute_code and load_result tools."""
     agent: Agent[AgentDeps, str] = Agent(
-        model,
+        maybe_gateway_model(model),
         system_prompt=system_prompt,
         deps_type=AgentDeps,
         end_strategy="exhaustive",

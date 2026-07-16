@@ -15,6 +15,7 @@ from anthropic import AsyncAnthropic
 from pydantic_graph import End, Graph
 
 from ..config import GRAPH_STATE_MODEL
+from ..llm_gateway import anthropic_client_kwargs
 from ..planning.helpers import chunk_text
 from ..shared import ChatEvent
 from .nodes import (
@@ -39,7 +40,7 @@ class GraphStateClient:
     def __init__(self, duckdb_store, sqlite_store) -> None:
         self._duckdb = duckdb_store
         self._sqlite = sqlite_store
-        self._anthropic = AsyncAnthropic()
+        self._anthropic = AsyncAnthropic(**anthropic_client_kwargs())
         self._schema_context: str = ""
 
     def set_schema_context(self, ctx: str) -> None:

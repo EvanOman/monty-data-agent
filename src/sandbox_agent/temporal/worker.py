@@ -17,6 +17,7 @@ from temporalio.client import Client
 from temporalio.worker import Worker
 
 from ..config import TEMPORAL_ADDRESS
+from ..llm_gateway import anthropic_client_kwargs
 from .activities import execute_subtask, plan_subtasks, synthesize_results
 from .workflows import PlanExecuteSynthesize
 
@@ -69,7 +70,7 @@ async def run_worker():
 
     # Initialize shared Anthropic client
     logger.info("Initializing Anthropic client for worker...")
-    _anthropic_client = AsyncAnthropic()
+    _anthropic_client = AsyncAnthropic(**anthropic_client_kwargs())
 
     # Connect to Temporal
     logger.info("Connecting to Temporal at %s...", TEMPORAL_ADDRESS)

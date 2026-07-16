@@ -10,6 +10,7 @@ from mcp import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
 from ..config import CODEMODE_MODEL
+from ..llm_gateway import anthropic_client_kwargs
 from ..shared import ChatEvent
 
 logger = logging.getLogger(__name__)
@@ -22,7 +23,7 @@ class CodeModeClient:
 
     def __init__(self, sqlite_store) -> None:
         self._sqlite = sqlite_store
-        self._anthropic = anthropic.AsyncAnthropic()
+        self._anthropic = anthropic.AsyncAnthropic(**anthropic_client_kwargs())
 
     async def chat(self, conversation_id: str, user_message: str):
         """Async generator yielding ChatEvent objects."""

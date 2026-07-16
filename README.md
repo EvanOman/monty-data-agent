@@ -71,6 +71,20 @@ just serve
 
 Open http://localhost:19876 in your browser.
 
+## LLM Gateway (optional)
+
+By default every client talks directly to its provider. To route the Anthropic
+SDK and pydantic-ai OpenAI clients through a [LiteLLM](https://github.com/BerriAI/litellm)
+gateway instead, set both env vars:
+
+```bash
+LLM_GATEWAY_BASE_URL=http://localhost:18400/v1   # OpenAI-shaped; /v1 stripped for Anthropic
+LLM_GATEWAY_API_KEY=<gateway-key>
+```
+
+Setting both flips routing for those two providers only; leaving either unset is
+a complete no-op. The Moonshot/Kimi provider path is never affected.
+
 ## Development
 
 ```bash
