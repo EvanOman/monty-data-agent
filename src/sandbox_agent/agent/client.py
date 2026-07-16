@@ -57,13 +57,15 @@ class AgentClient:
             self._tool_timings.append(timing)
             # Emit artifact immediately so it appears inline, not after summary
             if self._event_queue:
-                artifact_data = json.dumps({
-                    "id": artifact["id"],
-                    "code": artifact["code"],
-                    "result_json": artifact.get("result_json"),
-                    "result_type": artifact.get("result_type"),
-                    "error": artifact.get("error"),
-                })
+                artifact_data = json.dumps(
+                    {
+                        "id": artifact["id"],
+                        "code": artifact["code"],
+                        "result_json": artifact.get("result_json"),
+                        "result_type": artifact.get("result_type"),
+                        "error": artifact.get("error"),
+                    }
+                )
                 await self._event_queue.put(("artifact", artifact_data))
             return {"content": [{"type": "text", "text": summary}]}
 
