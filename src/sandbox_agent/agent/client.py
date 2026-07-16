@@ -16,7 +16,7 @@ from claude_agent_sdk import (
 
 from ..config import MAX_AGENT_TURNS, MODEL
 from ..engine.functions import ExternalFunctions
-from ..shared import ChatEvent, ToolExecutor
+from ..shared import ChatEvent, ChatEventType, ToolExecutor
 from .prompts import build_system_prompt
 
 logger = logging.getLogger(__name__)
@@ -112,7 +112,7 @@ class AgentClient:
         t_chat_start = time.time()
 
         # Yield immediately so the user sees something right away
-        yield ChatEvent(type="status", data="Starting analysis...")
+        yield ChatEvent(type=ChatEventType.STATUS, data="Starting analysis...")
 
         history = await self._sqlite.get_messages(conversation_id)
         if history and history[-1]["content"] == user_message:
@@ -205,15 +205,15 @@ class AgentClient:
             if event_type == "_sentinel":
                 break
             elif event_type == "text":
-                yield ChatEvent(type="text", data=event_data)
+                yield ChatEvent(type=ChatEventType.TEXT, data=event_data)
             elif event_type == "status":
-                yield ChatEvent(type="status", data=event_data)
+                yield ChatEvent(type=ChatEventType.STATUS, data=event_data)
             elif event_type == "code":
-                yield ChatEvent(type="code", data=event_data)
+                yield ChatEvent(type=ChatEventType.CODE, data=event_data)
             elif event_type == "artifact":
-                yield ChatEvent(type="artifact", data=event_data)
+                yield ChatEvent(type=ChatEventType.ARTIFACT, data=event_data)
             elif event_type == "error":
-                yield ChatEvent(type="error", data=event_data)
+                yield ChatEvent(type=ChatEventType.ERROR, data=event_data)
 
         await agent_task
 
@@ -229,7 +229,7 @@ class AgentClient:
         }
 
         yield ChatEvent(
-            type="done",
+            type=ChatEventType.DONE,
             data=json.dumps(
                 {
                     "artifacts": [a["id"] for a in self._pending_artifacts],

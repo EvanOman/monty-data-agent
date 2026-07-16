@@ -14,7 +14,7 @@ from datetime import timedelta
 from temporalio.client import Client, WorkflowHandle
 
 from ..config import TEMPORAL_ADDRESS
-from ..shared import ChatEvent
+from ..shared import ChatEvent, ChatEventType
 from .prompts import SYNTHESIZE_SYSTEM_PROMPT, build_plan_prompt, build_subtask_prompt
 from .worker import TASK_QUEUE
 
@@ -47,15 +47,15 @@ class TemporalClient:
         """
         t_start = time.time()
 
-        yield ChatEvent(type="status", data="Connecting to orchestrator...")
+        yield ChatEvent(type=ChatEventType.STATUS, data="Connecting to orchestrator...")
 
         try:
             client = await self._ensure_connected()
         except Exception as e:
             logger.error("Failed to connect to Temporal: %s", e)
-            yield ChatEvent(type="error", data=f"Temporal connection failed: {e}")
+            yield ChatEvent(type=ChatEventType.ERROR, data=f"Temporal connection failed: {e}")
             yield ChatEvent(
-                type="done",
+                type=ChatEventType.DONE,
                 data=json.dumps({"artifacts": [], "timing": {"total_ms": 0, "error": str(e)}}),
             )
             return
@@ -74,7 +74,7 @@ class TemporalClient:
         plan_prompt = build_plan_prompt(self._schema_context)
         subtask_prompt = build_subtask_prompt(self._schema_context)
 
-        yield ChatEvent(type="status", data="Planning analysis...")
+        yield ChatEvent(type=ChatEventType.STATUS, data="Planning analysis...")
 
         # Start the workflow
         workflow_id = f"chat-{conversation_id}-{uuid.uuid4().hex[:8]}"
@@ -97,9 +97,9 @@ class TemporalClient:
             )
         except Exception as e:
             logger.exception("Failed to start Temporal workflow")
-            yield ChatEvent(type="error", data=str(e))
+            yield ChatEvent(type=ChatEventType.ERROR, data=str(e))
             yield ChatEvent(
-                type="done",
+                type=ChatEventType.DONE,
                 data=json.dumps({"artifacts": [], "timing": {"total_ms": 0, "error": str(e)}}),
             )
             return
@@ -123,9 +123,11 @@ class TemporalClient:
                     task_id = task_info.get("task_id", "")
                     error = task_info.get("error")
                     if error:
-                        yield ChatEvent(type="status", data=f"Task '{task_id}' failed: {error}")
+                        yield ChatEvent(
+                            type=ChatEventType.STATUS, data=f"Task '{task_id}' failed: {error}"
+                        )
                     else:
-                        yield ChatEvent(type="status", data=f"Completed: {task_id}")
+                        yield ChatEvent(type=ChatEventType.STATUS, data=f"Completed: {task_id}")
                 emitted_tasks = len(completed)
 
                 # Emit plan info once available
@@ -133,13 +135,13 @@ class TemporalClient:
                 if plan and emitted_tasks == 0 and status == "executing":
                     task_count = len(plan)
                     yield ChatEvent(
-                        type="status",
+                        type=ChatEventType.STATUS,
                         data=f"Executing {task_count} sub-tasks...",
                     )
 
                 if status in ("synthesizing", "done"):
                     if status == "synthesizing":
-                        yield ChatEvent(type="status", data="Synthesizing results...")
+                        yield ChatEvent(type=ChatEventType.STATUS, data="Synthesizing results...")
                     break
 
                 await asyncio.sleep(1)
@@ -152,9 +154,9 @@ class TemporalClient:
             result = await handle.result()
         except Exception as e:
             logger.exception("Temporal workflow failed")
-            yield ChatEvent(type="error", data=str(e))
+            yield ChatEvent(type=ChatEventType.ERROR, data=str(e))
             yield ChatEvent(
-                type="done",
+                type=ChatEventType.DONE,
                 data=json.dumps({"artifacts": [], "timing": {"total_ms": 0, "error": str(e)}}),
             )
             return
@@ -167,7 +169,7 @@ class TemporalClient:
         task_count = len(plan)
         parallel_batches = _count_batches(plan)
         yield ChatEvent(
-            type="status",
+            type=ChatEventType.STATUS,
             data=f"Executed {task_count} sub-tasks in {parallel_batches} parallel batches",
         )
 
@@ -179,7 +181,7 @@ class TemporalClient:
                 artifact_ids.append(uid)
                 artifact = await self._sqlite.get_artifact(uid)
                 if artifact:
-                    yield ChatEvent(type="code", data=artifact.get("code", ""))
+                    yield ChatEvent(type=ChatEventType.CODE, data=artifact.get("code", ""))
                     artifact_data = {
                         "id": uid,
                         "code": artifact.get("code", ""),
@@ -187,11 +189,11 @@ class TemporalClient:
                         "result_type": artifact.get("result_type"),
                         "error": artifact.get("error"),
                     }
-                    yield ChatEvent(type="artifact", data=json.dumps(artifact_data))
+                    yield ChatEvent(type=ChatEventType.ARTIFACT, data=json.dumps(artifact_data))
 
         # Stream the synthesis as text
         for chunk in _chunk_text(synthesis, chunk_size=40):
-            yield ChatEvent(type="text", data=chunk)
+            yield ChatEvent(type=ChatEventType.TEXT, data=chunk)
 
         t_end = time.time()
         total_ms = round((t_end - t_start) * 1000)
@@ -206,7 +208,7 @@ class TemporalClient:
         }
 
         yield ChatEvent(
-            type="done",
+            type=ChatEventType.DONE,
             data=json.dumps({"artifacts": artifact_ids, "timing": timing_data}),
         )
 

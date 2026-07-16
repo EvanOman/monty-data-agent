@@ -6,7 +6,7 @@ import logging
 import time
 from collections.abc import Callable, Coroutine
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, cast
 
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.messages import (
@@ -25,7 +25,7 @@ from ..agent.prompts import build_system_prompt
 from ..config import PYDANTIC_AI_MODEL
 from ..engine.functions import ExternalFunctions
 from ..llm_gateway import maybe_gateway_model
-from ..shared import ChatEvent, ToolExecutor
+from ..shared import ChatEvent, ChatEventType, ToolExecutor
 
 DEFAULT_MODEL = PYDANTIC_AI_MODEL
 
@@ -121,7 +121,7 @@ class PydanticAIClient:
 
         t_chat_start = time.time()
 
-        yield ChatEvent(type="status", data="Starting analysis...")
+        yield ChatEvent(type=ChatEventType.STATUS, data="Starting analysis...")
 
         history = await self._sqlite.get_messages(conversation_id)
         if history and history[-1]["content"] == user_message:
@@ -226,7 +226,7 @@ class PydanticAIClient:
             if event_type == "_sentinel":
                 break
             elif event_data is not None:
-                yield ChatEvent(type=event_type, data=event_data)
+                yield ChatEvent(type=cast(ChatEventType, event_type), data=event_data)
 
         await agent_task
 
@@ -239,7 +239,7 @@ class PydanticAIClient:
                 "result_type": artifact.get("result_type"),
                 "error": artifact.get("error"),
             }
-            yield ChatEvent(type="artifact", data=json.dumps(artifact_data))
+            yield ChatEvent(type=ChatEventType.ARTIFACT, data=json.dumps(artifact_data))
 
         t_chat_end = time.time()
         total_ms = round((t_chat_end - t_chat_start) * 1000)
@@ -253,7 +253,7 @@ class PydanticAIClient:
         }
 
         yield ChatEvent(
-            type="done",
+            type=ChatEventType.DONE,
             data=json.dumps(
                 {
                     "artifacts": [a["id"] for a in pending_artifacts],

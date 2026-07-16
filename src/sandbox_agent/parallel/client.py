@@ -26,7 +26,7 @@ from ..planning.helpers import (
     strip_code_fences,
 )
 from ..planning.models import SubTaskResult
-from ..shared import ChatEvent
+from ..shared import ChatEvent, ChatEventType
 from .dag import execute_dag
 
 logger = logging.getLogger(__name__)
@@ -50,7 +50,7 @@ class ParallelClient:
         """Yield ChatEvent objects as the pipeline processes the message."""
         t_start = time.time()
 
-        yield ChatEvent(type="status", data="Planning analysis...")
+        yield ChatEvent(type=ChatEventType.STATUS, data="Planning analysis...")
 
         # Load conversation history
         history = await self._sqlite.get_messages(conversation_id)
@@ -63,9 +63,9 @@ class ParallelClient:
             plan = await self._plan(user_message, history)
         except Exception as e:
             logger.exception("Planning failed")
-            yield ChatEvent(type="error", data=f"Planning failed: {e}")
+            yield ChatEvent(type=ChatEventType.ERROR, data=f"Planning failed: {e}")
             yield ChatEvent(
-                type="done",
+                type=ChatEventType.DONE,
                 data=json.dumps({"artifacts": [], "timing": {"total_ms": 0, "error": str(e)}}),
             )
             return
@@ -73,7 +73,7 @@ class ParallelClient:
         task_count = len(plan.tasks)
         batches = plan.batches()
         yield ChatEvent(
-            type="status",
+            type=ChatEventType.STATUS,
             data=f"Executing {task_count} sub-tasks in {len(batches)} batches...",
         )
 
@@ -101,17 +101,19 @@ class ParallelClient:
         # Emit artifacts
         for task_id, result in all_results.items():
             if result.error:
-                yield ChatEvent(type="status", data=f"Task '{task_id}' failed: {result.error}")
+                yield ChatEvent(
+                    type=ChatEventType.STATUS, data=f"Task '{task_id}' failed: {result.error}"
+                )
             else:
-                yield ChatEvent(type="status", data=f"Completed: {task_id}")
+                yield ChatEvent(type=ChatEventType.STATUS, data=f"Completed: {task_id}")
 
             if result.artifact_uid:
                 artifact_ids.append(result.artifact_uid)
                 artifact = await self._sqlite.get_artifact(result.artifact_uid)
                 if artifact:
-                    yield ChatEvent(type="code", data=artifact.get("code", ""))
+                    yield ChatEvent(type=ChatEventType.CODE, data=artifact.get("code", ""))
                     yield ChatEvent(
-                        type="artifact",
+                        type=ChatEventType.ARTIFACT,
                         data=json.dumps(
                             {
                                 "id": result.artifact_uid,
@@ -124,7 +126,7 @@ class ParallelClient:
                     )
 
         # Phase 3: Synthesize
-        yield ChatEvent(type="status", data="Synthesizing results...")
+        yield ChatEvent(type=ChatEventType.STATUS, data="Synthesizing results...")
 
         try:
             synthesis = await self._synthesize(user_message, all_results)
@@ -133,13 +135,13 @@ class ParallelClient:
             synthesis = f"Error during synthesis: {e}"
 
         for text_chunk in chunk_text(synthesis):
-            yield ChatEvent(type="text", data=text_chunk)
+            yield ChatEvent(type=ChatEventType.TEXT, data=text_chunk)
 
         t_end = time.time()
         total_ms = round((t_end - t_start) * 1000)
 
         yield ChatEvent(
-            type="done",
+            type=ChatEventType.DONE,
             data=json.dumps(
                 {
                     "artifacts": artifact_ids,
@@ -224,7 +226,7 @@ class ParallelClient:
                 task_id=task_id,
                 artifact_uid=artifact["id"],
                 summary=f"Error: {result.error}",
-                result_type="error",
+                result_type=ChatEventType.ERROR,
                 error=result.error,
             )
 
