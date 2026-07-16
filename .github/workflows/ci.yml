@@ -12,8 +12,22 @@ jobs:
       matrix:
         python-version: ["3.12", "3.13"]
 
+    defaults:
+      run:
+        working-directory: monty-data-agent
+
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: monty-data-agent
+
+      # pyproject declares chatkit as a local path dep at ../chatkit/python,
+      # so CI checks it out as a workspace sibling.
+      - name: Check out chatkit (path dependency)
+        uses: actions/checkout@v4
+        with:
+          repository: EvanOman/chatkit
+          path: chatkit
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -44,5 +58,5 @@ jobs:
         if: matrix.python-version == '3.13'
         uses: codecov/codecov-action@v5
         with:
-          files: ./coverage.xml
+          files: monty-data-agent/coverage.xml
           fail_ci_if_error: false
