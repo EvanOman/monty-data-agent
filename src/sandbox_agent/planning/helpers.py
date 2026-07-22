@@ -10,9 +10,15 @@ logger = logging.getLogger(__name__)
 
 
 def get_text(response: Any) -> str:
-    """Extract text from an Anthropic API response, handling the content block union type."""
-    block = response.content[0]
-    return block.text
+    """Extract text from an Anthropic API response, handling the content block union type.
+
+    Response content can include non-text blocks (e.g. ``thinking`` blocks from
+    extended-thinking models) alongside ``text`` blocks, so we filter to text
+    blocks and join them rather than blindly indexing ``content[0]``.
+    """
+    return "".join(
+        block.text for block in response.content if getattr(block, "text", None) is not None
+    )
 
 
 def strip_code_fences(text: str) -> str:
